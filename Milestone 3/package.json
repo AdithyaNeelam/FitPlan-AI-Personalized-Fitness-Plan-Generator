@@ -1,0 +1,19 @@
+{
+  "name": "fitplanai-otp-login",
+  "version": "1.0.0",
+  "description": "FitPlan AI login with email OTP",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.21.2",
+    "express-session": "^1.19.0",
+    "mongodb": "^7.1.0",
+    "nodemailer": "^8.0.1",
+    "passport": "^0.7.0",
+    "passport-google-oauth20": "^2.0.0"
+  }
+}

@@ -1,0 +1,6 @@
+node_modules/
+.env
+passwords.txt
+_db_start_err.txt
+_db_start_out.txt
+*.zip

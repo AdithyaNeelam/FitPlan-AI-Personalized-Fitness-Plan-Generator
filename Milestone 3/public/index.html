@@ -1,0 +1,146 @@
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FitPlan AI Auth</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="page-shell">
+      <section class="hero-panel">
+        <p class="eyebrow">FITPLAN AI</p>
+        <h1>Train smarter with a plan built for your body.</h1>
+        <p class="hero-text">
+          Personalized routines, adaptive nutrition guidance, and progress intelligence in one place.
+          Start by creating your secure account.
+        </p>
+        <div class="hero-points">
+          <article>
+            <h3>Adaptive Programs</h3>
+            <p>Weekly workouts evolve based on your goals and consistency.</p>
+          </article>
+          <article>
+            <h3>Data-Led Progress</h3>
+            <p>Track habits, recovery, and body metrics in a single timeline.</p>
+          </article>
+          <article>
+            <h3>Any Email Access</h3>
+            <p>Register and verify with OTP using any valid email provider.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="auth-panel card">
+        <div class="brand-head">
+          <h2>Welcome</h2>
+          <p>Sign in or create your account</p>
+        </div>
+
+        <div class="tabs">
+          <button id="tabLogin" class="tab active" type="button">Sign In</button>
+          <button id="tabRegister" class="tab" type="button">Register</button>
+        </div>
+
+        <section id="loginPanel">
+          <button id="googleLoginBtn" class="google-btn" type="button">Continue with Google</button>
+          <div class="divider"><span>or</span></div>
+
+          <form id="loginForm" class="block">
+            <label for="loginEmail">Email</label>
+            <input id="loginEmail" type="email" placeholder="name@example.com" required />
+
+            <label for="loginPassword">Password</label>
+            <input id="loginPassword" type="password" minlength="8" placeholder="Enter password" required />
+
+            <button type="submit">Login</button>
+          </form>
+
+          <form id="loginVerifyForm" class="block hidden">
+            <label for="loginOtp">Login OTP</label>
+            <input id="loginOtp" type="text" inputmode="numeric" maxlength="6" placeholder="6-digit code" required />
+
+            <button type="submit">Verify Login OTP</button>
+          </form>
+        </section>
+
+        <section id="registerPanel" class="hidden">
+          <form id="registerSendOtpForm" class="block">
+            <div class="grid two">
+              <div>
+                <label for="registerName">Full Name</label>
+                <input id="registerName" type="text" placeholder="Adithya K" required />
+              </div>
+              <div>
+                <label for="registerAge">Age</label>
+                <input id="registerAge" type="number" min="13" max="80" placeholder="24" required />
+              </div>
+            </div>
+
+            <div class="grid two">
+              <div>
+                <label for="registerGender">Gender</label>
+                <select id="registerGender" required>
+                  <option value="">Select</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="non-binary">Non-binary</option>
+                  <option value="prefer_not_to_say">Prefer not to say</option>
+                </select>
+              </div>
+              <div>
+                <label for="registerGoal">Primary Goal</label>
+                <select id="registerGoal" required>
+                  <option value="">Select</option>
+                  <option value="fat_loss">Fat Loss</option>
+                  <option value="muscle_gain">Muscle Gain</option>
+                  <option value="strength">Strength</option>
+                  <option value="endurance">Endurance</option>
+                  <option value="general_fitness">General Fitness</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="grid two">
+              <div>
+                <label for="registerHeight">Height (cm)</label>
+                <input id="registerHeight" type="number" min="100" max="250" placeholder="172" required />
+              </div>
+              <div>
+                <label for="registerWeight">Weight (kg)</label>
+                <input id="registerWeight" type="number" min="30" max="250" step="0.1" placeholder="70" required />
+              </div>
+            </div>
+
+            <label for="registerActivity">Activity Level</label>
+            <select id="registerActivity" required>
+              <option value="">Select</option>
+              <option value="sedentary">Sedentary</option>
+              <option value="lightly_active">Lightly Active</option>
+              <option value="moderately_active">Moderately Active</option>
+              <option value="very_active">Very Active</option>
+            </select>
+
+            <label for="registerEmail">Email</label>
+            <input id="registerEmail" type="email" placeholder="name@example.com" required />
+
+            <label for="registerPassword">Create Password</label>
+            <input id="registerPassword" type="password" minlength="8" placeholder="Minimum 8 characters" required />
+
+            <button type="submit">Send OTP for Registration</button>
+          </form>
+
+          <form id="registerVerifyForm" class="block hidden">
+            <label for="registerOtp">OTP</label>
+            <input id="registerOtp" type="text" inputmode="numeric" maxlength="6" placeholder="6-digit code" required />
+            <button type="submit">Verify OTP & Create Account</button>
+          </form>
+        </section>
+
+        <p id="status" class="status"></p>
+      </section>
+    </main>
+
+    <script src="/app.js"></script>
+  </body>
+</html>

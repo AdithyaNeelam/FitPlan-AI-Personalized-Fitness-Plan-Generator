@@ -1,0 +1,7 @@
+.env
+node_modules/
+*.zip
+passwords.txt
+_db_start_err.txt
+_db_start_out.txt
+_milestone3_source/
