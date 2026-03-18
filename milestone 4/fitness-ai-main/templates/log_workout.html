@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log Workout - FitAI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 1.5rem;
+            padding: 2rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        
+        h1 {
+            color: #6b46c1;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 2rem;
+        }
+        
+        .quick-add {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        
+        .workout-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-align: center;
+        }
+        
+        .workout-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(107, 70, 193, 0.3);
+        }
+        
+        .workout-icon {
+            font-size: 2.5rem;
+            color: #6b46c1;
+            margin-bottom: 0.5rem;
+        }
+        
+        .workout-name {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #1f2937;
+            margin-bottom: 0.25rem;
+        }
+        
+        .workout-desc {
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #4b5563;
+            font-weight: 600;
+        }
+        
+        label i {
+            color: #6b46c1;
+            margin-right: 0.5rem;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #6b46c1;
+        }
+        
+        .btn-primary {
+            background: #6b46c1;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 0.5rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary:hover {
+            background: #553c9a;
+            transform: translateY(-2px);
+        }
+        
+        .btn-primary:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+        
+        .btn-secondary {
+            background: #e5e7eb;
+            color: #1f2937;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: background 0.3s;
+        }
+        
+        .btn-secondary:hover {
+            background: #d1d5db;
+        }
+        
+        .spinner {
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .animate {
+            animation: slideIn 0.5s ease-out;
+        }
+        
+        .date-input {
+            background: #f9fafb;
+        }
+
+        /* Dark mode styles */
+body.dark-mode {
+    background: #1a1a1a;
+    color: #e5e7eb;
+}
+
+body.dark-mode .navbar {
+    background: #2d2d2d;
+    color: white;
+}
+
+body.dark-mode .nav-links a {
+    color: #ddd;
+}
+
+body.dark-mode .nav-links a:hover {
+    color: #6b46c1;
+}
+
+body.dark-mode .card,
+body.dark-mode .sidebar,
+body.dark-mode .feed,
+body.dark-mode .chart-card,
+body.dark-mode .stat-card,
+body.dark-mode .goal-card,
+body.dark-mode .post,
+body.dark-mode .modal-content,
+body.dark-mode .settings-panel,
+body.dark-mode .left-sidebar,
+body.dark-mode .main-content,
+body.dark-mode .right-panel {
+    background: #2d2d2d;
+    color: #e5e7eb;
+    border-color: #4b5563;
+}
+
+body.dark-mode h1, 
+body.dark-mode h2, 
+body.dark-mode h3, 
+body.dark-mode h4,
+body.dark-mode .stat-value,
+body.dark-mode .goal-title,
+body.dark-mode .post-title,
+body.dark-mode .badge-name {
+    color: #f3f4f6;
+}
+
+body.dark-mode p,
+body.dark-mode .stat-label,
+body.dark-mode .post-meta,
+body.dark-mode .timeline-date,
+body.dark-mode .friend-name {
+    color: #9ca3af;
+}
+
+body.dark-mode input,
+body.dark-mode select,
+body.dark-mode textarea {
+    background: #374151;
+    border-color: #4b5563;
+    color: #e5e7eb;
+}
+
+body.dark-mode input:focus,
+body.dark-mode select:focus,
+body.dark-mode textarea:focus {
+    border-color: #6b46c1;
+}
+
+body.dark-mode .btn-outline {
+    border-color: #6b46c1;
+    color: #6b46c1;
+}
+
+body.dark-mode .btn-outline:hover {
+    background: #6b46c1;
+    color: white;
+}
+
+body.dark-mode .btn-secondary {
+    background: #374151;
+    color: #e5e7eb;
+    border-color: #4b5563;
+}
+
+body.dark-mode .btn-secondary:hover {
+    background: #4b5563;
+}
+
+body.dark-mode .progress-bar {
+    background: #4b5563;
+}
+
+body.dark-mode .progress-fill {
+    background: linear-gradient(90deg, #6b46c1, #38a169);
+}
+
+body.dark-mode .badge-card {
+    background: #374151;
+    color: #e5e7eb;
+}
+
+body.dark-mode .badge-card.locked {
+    opacity: 0.3;
+}
+
+body.dark-mode .friend-card,
+body.dark-mode .friend-item,
+body.dark-mode .post-item,
+body.dark-mode .timeline-item {
+    background: #374151;
+    border-color: #4b5563;
+}
+
+body.dark-mode .water-tracker {
+    background: #1e3a5f;
+}
+
+body.dark-mode .nutrition-tip {
+    background: #1f2937;
+}
+
+body.dark-mode .leaderboard-item {
+    border-color: #4b5563;
+}
+
+body.dark-mode .rank {
+    background: #4b5563;
+    color: #e5e7eb;
+}
+
+body.dark-mode .rank-1 { background: #b45309; }
+body.dark-mode .rank-2 { background: #6b7280; }
+body.dark-mode .rank-3 { background: #92400e; }
+
+body.dark-mode ::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+}
+
+body.dark-mode .close-btn {
+    color: #9ca3af;
+}
+
+body.dark-mode .close-btn:hover {
+    color: #f3f4f6;
+}
+
+body.dark-mode hr {
+    border-color: #4b5563;
+}
+
+body.dark-mode .alert-success {
+    background: #065f46;
+    color: #d1fae5;
+}
+
+body.dark-mode .alert-error {
+    background: #991b1b;
+    color: #fee2e2;
+}
+    </style>
+</head>
+<body>
+    <div class="container animate">
+        <h1>
+            <i class="fas fa-dumbbell" style="color: #6b46c1;"></i>
+            Log Your Workout
+        </h1>
+        
+        <!-- Quick Add Templates -->
+        <div class="quick-add">
+            <div class="workout-card" onclick="selectTemplate('Upper Body', 300, 'Push-ups, Rows, Press', 30)">
+                <div class="workout-icon">💪</div>
+                <div class="workout-name">Upper Body</div>
+                <div class="workout-desc">~300 cal • 30 min</div>
+            </div>
+            
+            <div class="workout-card" onclick="selectTemplate('Lower Body', 350, 'Squats, Lunges, Deadlifts', 35)">
+                <div class="workout-icon">🦵</div>
+                <div class="workout-name">Lower Body</div>
+                <div class="workout-desc">~350 cal • 35 min</div>
+            </div>
+            
+            <div class="workout-card" onclick="selectTemplate('Cardio', 400, 'Running, Jumping Jacks', 30)">
+                <div class="workout-icon">🏃</div>
+                <div class="workout-name">Cardio</div>
+                <div class="workout-desc">~400 cal • 30 min</div>
+            </div>
+            
+            <div class="workout-card" onclick="selectTemplate('Full Body', 450, 'Burpees, Thrusters', 40)">
+                <div class="workout-icon">⚡</div>
+                <div class="workout-name">Full Body</div>
+                <div class="workout-desc">~450 cal • 40 min</div>
+            </div>
+        </div>
+        
+        <!-- Main Form -->
+        <form id="workoutForm" onsubmit="logWorkout(event)">
+            <div class="form-group">
+                <label><i class="fas fa-calendar"></i> Date</label>
+                <input type="date" id="workoutDate" class="date-input" value="{{ now.date() }}" required>
+            </div>
+            
+            <div class="form-group">
+                <label><i class="fas fa-tag"></i> Workout Type</label>
+                <select id="workoutType" required>
+                    <option value="">Select workout type</option>
+                    <option value="Upper Body">Upper Body</option>
+                    <option value="Lower Body">Lower Body</option>
+                    <option value="Cardio">Cardio</option>
+                    <option value="Full Body">Full Body</option>
+                    <option value="Core">Core/Abs</option>
+                    <option value="Yoga">Yoga/Stretching</option>
+                    <option value="HIIT">HIIT</option>
+                    <option value="Strength">Strength Training</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label><i class="fas fa-clock"></i> Duration (minutes)</label>
+                <input type="number" id="duration" min="5" max="180" value="30" required>
+            </div>
+            
+            <div class="form-group">
+                <label><i class="fas fa-fire"></i> Calories Burned</label>
+                <input type="number" id="calories" min="0" value="300" required>
+            </div>
+            
+            <div class="form-group">
+                <label><i class="fas fa-list"></i> Exercises Done</label>
+                <textarea id="exercises" rows="3" placeholder="e.g., Push-ups, Rows, Press"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label><i class="fas fa-smile"></i> How did it feel?</label>
+                <select id="mood">
+                    <option value="great">💪 Great - Pushed hard!</option>
+                    <option value="good">👍 Good - Solid workout</option>
+                    <option value="okay">😐 Okay - Did my best</option>
+                    <option value="tired">😴 Tired - Low energy</option>
+                </select>
+            </div>
+            
+            <button type="submit" class="btn-primary" id="submitBtn">
+                <i class="fas fa-save"></i> Log Workout
+            </button>
+        </form>
+        
+        <div style="text-align: center; margin-top: 1.5rem;">
+            <a href="/profile" class="btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Profile
+            </a>
+        </div>
+    </div>
+    
+    <script>
+        // Function to fill template values
+        function selectTemplate(type, calories, exercises, duration) {
+    document.getElementById('workoutType').value = type;
+    document.getElementById('calories').value = calories;
+    document.getElementById('exercises').value = exercises;
+    document.getElementById('duration').value = duration;
+    
+    // Highlight selected card
+    document.querySelectorAll('.workout-card').forEach(card => {
+        card.style.border = 'none';
+    });
+    event.currentTarget.style.border = '2px solid #6b46c1';
+}
+        
+        // Main log workout function
+        // Main log workout function
+// Main log workout function
+async function logWorkout(event) {
+    event.preventDefault();
+    
+    // Get form values - matching your actual database model
+    const workout = {
+        type: document.getElementById('workoutType').value,  // Changed back to 'type' (not workout_type)
+        duration: parseInt(document.getElementById('duration').value),
+        calories: parseInt(document.getElementById('calories').value),  // Changed back to 'calories' (not calories_burned)
+        exercises: document.getElementById('exercises').value,
+        mood: document.getElementById('mood').value,
+        date: document.getElementById('workoutDate').value
+    };
+    
+    // Validate
+    if (!workout.type) {
+        alert('Please select a workout type');
+        return;
+    }
+    
+    // Show loading state
+    const btn = document.getElementById('submitBtn');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging...';
+    btn.disabled = true;
+    
+    try {
+        const response = await fetch('/log-workout', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(workout)
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            alert('✅ Workout logged successfully!');
+            window.location.href = '/progress';
+        } else {
+            alert('❌ Failed to log workout. Please try again.');
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('❌ Error logging workout. Please try again.');
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+    }
+}
+    
+        
+        
+
+        // Set today's date as default
+        document.addEventListener('DOMContentLoaded', function() {
+            applyDarkMode();
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('workoutDate').value = today;
+        });
+    </script>
+</body>
+</html>

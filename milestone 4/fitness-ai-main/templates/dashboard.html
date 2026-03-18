@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - FitAI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        }
+        body {
+            background: #f3f4f6;
+        }
+        /* Navbar Styles */
+        .navbar {
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #6b46c1;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: #4b5563;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #6b46c1;
+        }
+        
+        .profile-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #6b46c1;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            cursor: pointer;
+            border: 2px solid white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .profile-circle:hover {
+            background: #553c9a;
+        }
+        .main-content {
+            margin-top: 80px;
+            padding: 2rem;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .welcome-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .welcome-card h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .stat-card i {
+            font-size: 2rem;
+            color: #6b46c1;
+            margin-bottom: 0.5rem;
+        }
+        .stat-card .label {
+            color: #6b7280;
+            font-size: 0.875rem;
+            margin-bottom: 0.25rem;
+        }
+        .stat-card .value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #1f2937;
+        }
+        .stat-card .unit {
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+        .generate-btn-container {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .generate-btn {
+            background: #6b46c1;
+            color: white;
+            border: none;
+            padding: 1rem 2.5rem;
+            font-size: 1.25rem;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            font-weight: 600;
+            box-shadow: 0 4px 6px rgba(107, 70, 193, 0.3);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .generate-btn:hover {
+            background: #553c9a;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(107, 70, 193, 0.4);
+        }
+        .progress-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .progress-header h2 {
+            color: #1f2937;
+        }
+        .update-btn {
+            background: #6b46c1;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .update-btn:hover {
+            background: #553c9a;
+        }
+        .progress-bar-container {
+            margin-bottom: 1rem;
+        }
+        .progress-bar-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.25rem;
+            color: #4b5563;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 0.75rem;
+            background: #e5e7eb;
+            border-radius: 1rem;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #6b46c1, #8b5cf6);
+            border-radius: 1rem;
+            transition: width 0.3s;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .modal.show {
+            display: flex;
+        }
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        .modal-header h2 {
+            color: #1f2937;
+        }
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #6b7280;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #4b5563;
+            font-weight: 600;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+        }
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #6b46c1;
+            box-shadow: 0 0 0 3px rgba(107, 70, 193, 0.1);
+        }
+        .radio-group {
+            display: flex;
+            gap: 1.5rem;
+        }
+        .radio-group label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: normal;
+        }
+        .btn-primary {
+            background: #6b46c1;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            width: 100%;
+            margin-top: 1rem;
+        }
+        .btn-primary:hover {
+            background: #553c9a;
+        }
+        .btn-secondary {
+            background: #e5e7eb;
+            color: #1f2937;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            width: 100%;
+            margin-top: 0.5rem;
+        }
+        .btn-secondary:hover {
+            background: #d1d5db;
+        }
+        .hidden {
+            display: none;
+        }
+        .alert {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+        .spinner {
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #6b46c1;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .main-content {
+                padding: 1rem;
+            }
+        }
+
+        /* Dark mode styles */
+body.dark-mode {
+    background: #1a1a1a;
+    color: #e5e7eb;
+}
+
+body.dark-mode .navbar {
+    background: #2d2d2d;
+    color: white;
+}
+
+body.dark-mode .nav-links a {
+    color: #ddd;
+}
+
+body.dark-mode .nav-links a:hover {
+    color: #6b46c1;
+}
+
+body.dark-mode .card,
+body.dark-mode .sidebar,
+body.dark-mode .feed,
+body.dark-mode .chart-card,
+body.dark-mode .stat-card,
+body.dark-mode .goal-card,
+body.dark-mode .post,
+body.dark-mode .modal-content,
+body.dark-mode .settings-panel,
+body.dark-mode .left-sidebar,
+body.dark-mode .main-content,
+body.dark-mode .right-panel {
+    background: #2d2d2d;
+    color: #e5e7eb;
+    border-color: #4b5563;
+}
+
+body.dark-mode h1, 
+body.dark-mode h2, 
+body.dark-mode h3, 
+body.dark-mode h4,
+body.dark-mode .stat-value,
+body.dark-mode .goal-title,
+body.dark-mode .post-title,
+body.dark-mode .badge-name {
+    color: #f3f4f6;
+}
+
+body.dark-mode p,
+body.dark-mode .stat-label,
+body.dark-mode .post-meta,
+body.dark-mode .timeline-date,
+body.dark-mode .friend-name {
+    color: #9ca3af;
+}
+
+body.dark-mode input,
+body.dark-mode select,
+body.dark-mode textarea {
+    background: #374151;
+    border-color: #4b5563;
+    color: #e5e7eb;
+}
+
+body.dark-mode input:focus,
+body.dark-mode select:focus,
+body.dark-mode textarea:focus {
+    border-color: #6b46c1;
+}
+
+body.dark-mode .btn-outline {
+    border-color: #6b46c1;
+    color: #6b46c1;
+}
+
+body.dark-mode .btn-outline:hover {
+    background: #6b46c1;
+    color: white;
+}
+
+body.dark-mode .btn-secondary {
+    background: #374151;
+    color: #e5e7eb;
+    border-color: #4b5563;
+}
+
+body.dark-mode .btn-secondary:hover {
+    background: #4b5563;
+}
+
+body.dark-mode .progress-bar {
+    background: #4b5563;
+}
+
+body.dark-mode .progress-fill {
+    background: linear-gradient(90deg, #6b46c1, #38a169);
+}
+
+body.dark-mode .badge-card {
+    background: #374151;
+    color: #e5e7eb;
+}
+
+body.dark-mode .badge-card.locked {
+    opacity: 0.3;
+}
+
+body.dark-mode .friend-card,
+body.dark-mode .friend-item,
+body.dark-mode .post-item,
+body.dark-mode .timeline-item {
+    background: #374151;
+    border-color: #4b5563;
+}
+
+body.dark-mode .water-tracker {
+    background: #1e3a5f;
+}
+
+body.dark-mode .nutrition-tip {
+    background: #1f2937;
+}
+
+body.dark-mode .leaderboard-item {
+    border-color: #4b5563;
+}
+
+body.dark-mode .rank {
+    background: #4b5563;
+    color: #e5e7eb;
+}
+
+body.dark-mode .rank-1 { background: #b45309; }
+body.dark-mode .rank-2 { background: #6b7280; }
+body.dark-mode .rank-3 { background: #92400e; }
+
+body.dark-mode ::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+}
+
+body.dark-mode .close-btn {
+    color: #9ca3af;
+}
+
+body.dark-mode .close-btn:hover {
+    color: #f3f4f6;
+}
+
+body.dark-mode hr {
+    border-color: #4b5563;
+}
+
+body.dark-mode .alert-success {
+    background: #065f46;
+    color: #d1fae5;
+}
+
+body.dark-mode .alert-error {
+    background: #991b1b;
+    color: #fee2e2;
+}
+    </style>
+</head>
+<body>
+    <!-- Navbar - Add these new links -->
+<nav class="navbar">
+    <div class="logo">
+        <i class="fas fa-dumbbell"></i>
+        <span>FitAI</span>
+    </div>
+    <div class="nav-links">
+        <a href="/dashboard">Dashboard</a>
+        <a href="/profile">Profile</a>
+        <a href="/analytics">📊 Analytics</a>
+        <a href="/achievements">🏆 Achievements</a>
+        <a href="/community">👥 Community</a>
+        <a href="/goals">🎯 Goals</a>
+        <a href="/calendar">📅 Calendar</a>
+        <a href="/music">🎵 Music</a>
+    </div>
+    <div class="profile-circle" onclick="window.location.href='/profile'">
+        {{ user.name[0]|upper }}
+    </div>
+</nav>
+    <!-- Profile Side Panel -->
+    <div id="profilePanel" style="display: none; position: fixed; top: 0; right: 0; width: 300px; height: 100%; background: white; box-shadow: -2px 0 8px rgba(0,0,0,0.1); z-index: 1001; padding: 2rem; transform: translateX(100%); transition: transform 0.3s;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+            <h2 style="font-size: 1.5rem; color: #1f2937;">Profile</h2>
+            <button onclick="toggleProfilePanel()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer;">&times;</button>
+        </div>
+        <div style="text-align: center; margin-bottom: 2rem;">
+            <div style="width: 80px; height: 80px; border-radius: 50%; background: #6b46c1; color: white; display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: bold; margin: 0 auto 1rem;">
+                {{ user.name[0]|upper if user else 'U' }}
+            </div>
+            <h3 style="margin-bottom: 0.25rem;">{{ user.name if user else 'User' }}</h3>
+            <p style="color: #6b7280;">{{ user.email if user else 'email@example.com' }}</p>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+            <button style="padding: 0.75rem; background: #f3f4f6; border: none; border-radius: 0.5rem; text-align: left; cursor: pointer;">
+                <i class="fas fa-user" style="margin-right: 0.5rem; color: #6b46c1;"></i> My Profile
+            </button>
+            <button style="padding: 0.75rem; background: #f3f4f6; border: none; border-radius: 0.5rem; text-align: left; cursor: pointer;">
+                <i class="fas fa-trophy" style="margin-right: 0.5rem; color: #6b46c1;"></i> Achievements
+            </button>
+            <button onclick="showProgressModal()" style="padding: 0.75rem; background: #f3f4f6; border: none; border-radius: 0.5rem; text-align: left; cursor: pointer;">
+                <i class="fas fa-chart-line" style="margin-right: 0.5rem; color: #6b46c1;"></i> Update Progress
+            </button>
+            <button style="padding: 0.75rem; background: #f3f4f6; border: none; border-radius: 0.5rem; text-align: left; cursor: pointer;">
+                <i class="fas fa-cog" style="margin-right: 0.5rem; color: #6b46c1;"></i> Settings
+            </button>
+            <a href="/logout" style="padding: 0.75rem; background: #fee2e2; border: none; border-radius: 0.5rem; text-align: left; cursor: pointer; text-decoration: none; color: #991b1b; display: block;">
+                <i class="fas fa-sign-out-alt" style="margin-right: 0.5rem;"></i> Logout
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Welcome Card -->
+        <div class="welcome-card">
+            <h1>Welcome back, {{ user.name if user else 'Fitness Enthusiast' }}! 👋</h1>
+            <p>Ready to crush your fitness goals today?</p>
+        </div>
+
+        <!-- Stats Grid - Update with initial values from user data or 0 -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <i class="fas fa-weight"></i>
+        <div class="label">Current Weight</div>
+        <div class="value" id="currentWeight">{{ user.weight if user and user.weight else '0' }} <span class="unit">kg</span></div>
+    </div>
+    <div class="stat-card">
+        <i class="fas fa-calendar-check"></i>
+        <div class="label">Workouts Done</div>
+        <div class="value" id="workoutsDone">0</div>
+    </div>
+    <div class="stat-card">
+        <i class="fas fa-fire"></i>
+        <div class="label">Calories Burned</div>
+        <div class="value" id="caloriesBurned">0</div>
+    </div>
+    <div class="stat-card">
+        <i class="fas fa-clock"></i>
+        <div class="label">Minutes</div>
+        <div class="value" id="totalMinutes">0</div>
+    </div>
+</div>
+        
+
+        <!-- Generate Workout Button -->
+        <div class="generate-btn-container">
+            <button class="generate-btn" onclick="showWorkoutModal()">
+                <i class="fas fa-magic"></i> Generate New Workout Plan
+            </button>
+        </div>
+
+        <!-- Progress Section -->
+<div class="progress-card">
+    <div class="progress-header">
+        <h2><i class="fas fa-chart-line" style="color: #6b46c1; margin-right: 0.5rem;"></i>Your Progress</h2>
+        <button class="update-btn" onclick="showProgressModal()">
+            <i class="fas fa-plus"></i> Update Progress
+        </button>
+    </div>
+    
+    <div class="progress-bar-container">
+        <div class="progress-bar-label">
+            <span>Goal Progress</span>
+            <span id="progressPercentage">0%</span>
+        </div>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+        </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 1.5rem;">
+        <div style="text-align: center;">
+            <div style="font-size: 0.875rem; color: #6b7280;">Start Weight</div>
+            <div style="font-weight: bold;" id="startWeight">{{ user.weight if user and user.weight else '0' }} kg</div>
+        </div>
+        <div style="text-align: center;">
+            <div style="font-size: 0.875rem; color: #6b7280;">Current Weight</div>
+            <div style="font-weight: bold;" id="currentWeight">{{ user.weight if user and user.weight else '0' }} kg</div>
+        </div>
+        <div style="text-align: center;">
+            <div style="font-size: 0.875rem; color: #6b7280;">Goal Weight</div>
+            <div style="font-weight: bold;" id="goalWeight">
+                {% if user and user.weight %}
+                    {{ (user.weight - 5) if user.weight > 60 else (user.weight + 3) }} kg
+                {% else %}
+                    0 kg
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+
+        <!-- Quick Tips -->
+        <div style="background: white; padding: 1.5rem; border-radius: 0.75rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h3 style="margin-bottom: 1rem;"><i class="fas fa-lightbulb" style="color: #6b46c1; margin-right: 0.5rem;"></i>Today's Fitness Tip</h3>
+            <p style="color: #4b5563;">"Consistency is more important than intensity. Show up every day, even if it's just for 15 minutes!"</p>
+        </div>
+    </div>
+
+    
+
+            
+            <!-- Enhanced Workout Generator Modal -->
+<div id="workoutModal" class="modal">
+    <div class="modal-content" style="max-width: 600px;">
+        <div class="modal-header">
+            <h2><i class="fas fa-magic" style="color: #6b46c1;"></i> Create Your Personalized Workout</h2>
+            <button class="close-btn" onclick="closeWorkoutModal()">&times;</button>
+        </div>
+        
+        <div id="workoutAlert" class="hidden"></div>
+
+        <div style="max-height: 70vh; overflow-y: auto; padding-right: 0.5rem;">
+            <!-- Personal Info Section -->
+            <div style="background: #f3f4f6; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1.5rem;">
+                <h3 style="color: #6b46c1; margin-bottom: 0.5rem; font-size: 1rem;">
+                    <i class="fas fa-user"></i> Your Profile
+                </h3>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem; font-size: 0.9rem;">
+                    <div>Age: <strong>{{ user.age if user else '25' }}</strong></div>
+                    <div>Weight: <strong>{{ user.weight if user else '70' }} kg</strong></div>
+                    <div>Height: <strong>{{ user.height if user else '170' }} cm</strong></div>
+                    <div>Level: <strong>{{ user.fitness_level if user else 'beginner' }}</strong></div>
+                </div>
+            </div>
+
+            <!-- Workout Preferences -->
+            <h3 style="color: #4b5563; margin-bottom: 1rem; font-size: 1.1rem;">🎯 Workout Preferences</h3>
+
+            <div class="form-group">
+                <label for="goal">Primary Goal <span style="color: #ef4444;">*</span></label>
+                <select id="goal" required>
+                    <option value="">Select your main goal</option>
+                    <option value="weight_loss">🔥 Weight Loss (Burn fat, tone body)</option>
+                    <option value="muscle_gain">💪 Muscle Gain (Build size and strength)</option>
+                    <option value="strength">🏋️ Strength (Get stronger, lift heavier)</option>
+                    <option value="endurance">🏃 Endurance (Last longer, better stamina)</option>
+                    <option value="toning">✨ Toning (Sculpt and define muscles)</option>
+                    <option value="flexibility">🧘 Flexibility & Mobility</option>
+                    <option value="general">🎯 General Fitness (Overall health)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="equipment">Available Equipment <span style="color: #ef4444;">*</span></label>
+                <select id="equipment" required>
+                    <option value="">Select what you have</option>
+                    <option value="bodyweight">🤸 Bodyweight Only (No equipment)</option>
+                    <option value="dumbbells">🏋️ Dumbbells Only</option>
+                    <option value="dumbbells_bench">🏋️ Dumbbells + Bench</option>
+                    <option value="full_gym">💪 Full Gym Access</option>
+                    <option value="resistance_bands">🪢 Resistance Bands</option>
+                    <option value="kettlebells">🏋️ Kettlebells</option>
+                    <option value="pullup_bar">🤸 Pull-up Bar</option>
+                    <option value="mixed">🔄 Mixed Home Equipment</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="customEquipment">Or specify custom equipment</label>
+                <input type="text" id="customEquipment" placeholder="e.g., yoga mat, exercise ball, jump rope">
+            </div>
+
+            <div class="form-group">
+                <label>Fitness Level <span style="color: #ef4444;">*</span></label>
+                <div style="display: flex; gap: 1.5rem; flex-wrap: wrap;">
+                    <label style="display: flex; align-items: center; gap: 0.5rem;">
+                        <input type="radio" name="level" value="beginner" checked> 🌱 Beginner
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 0.5rem;">
+                        <input type="radio" name="level" value="intermediate"> 🌿 Intermediate
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 0.5rem;">
+                        <input type="radio" name="level" value="advanced"> 🌳 Advanced
+                    </label>
+                </div>
+            </div>
+
+            <div style="border-top: 1px solid #e5e7eb; margin: 1.5rem 0;"></div>
+
+            <!-- Additional Details -->
+            <h3 style="color: #4b5563; margin-bottom: 1rem; font-size: 1.1rem;">📋 Additional Details</h3>
+
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem;">
+                <div class="form-group">
+                    <label for="workoutDuration">Minutes per workout</label>
+                    <select id="workoutDuration">
+                        <option value="15">15 minutes (Quick)</option>
+                        <option value="30" selected>30 minutes (Standard)</option>
+                        <option value="45">45 minutes (Extended)</option>
+                        <option value="60">60 minutes (Full session)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="daysPerWeek">Days per week</label>
+                    <select id="daysPerWeek">
+                        <option value="3">3 days</option>
+                        <option value="4">4 days</option>
+                        <option value="5" selected>5 days</option>
+                        <option value="6">6 days</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="focusAreas">Areas to focus on</label>
+                <select id="focusAreas" multiple size="3" style="height: auto;">
+                    <option value="chest">Chest</option>
+                    <option value="back">Back</option>
+                    <option value="shoulders">Shoulders</option>
+                    <option value="arms">Arms</option>
+                    <option value="legs">Legs</option>
+                    <option value="core">Core/Abs</option>
+                    <option value="full_body">Full Body</option>
+                </select>
+                <small style="color: #6b7280;">Hold Ctrl to select multiple</small>
+            </div>
+
+            <div class="form-group">
+                <label for="injuries">Any injuries or limitations?</label>
+                <input type="text" id="injuries" placeholder="e.g., knee pain, lower back issues">
+            </div>
+
+            <div style="border-top: 1px solid #e5e7eb; margin: 1.5rem 0;"></div>
+
+            <!-- Experience & Preferences -->
+            <h3 style="color: #4b5563; margin-bottom: 1rem; font-size: 1.1rem;">💡 Experience Level</h3>
+
+            <div class="form-group">
+                <label for="exerciseExperience">How long have you been exercising?</label>
+                <select id="exerciseExperience">
+                    <option value="new">Just starting (less than 1 month)</option>
+                    <option value="beginner">1-3 months</option>
+                    <option value="intermediate">3-12 months</option>
+                    <option value="advanced">1+ years</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="workoutStyle">Preferred workout style</label>
+                <select id="workoutStyle">
+                    <option value="traditional">Traditional sets & reps</option>
+                    <option value="circuit">Circuit training</option>
+                    <option value="hiit">HIIT (High Intensity)</option>
+                    <option value="superset">Supersets</option>
+                    <option value="dropset">Drop sets</option>
+                </select>
+            </div>
+
+            <div style="background: #f0f9ff; padding: 1rem; border-radius: 0.5rem; margin: 1rem 0;">
+                <h4 style="color: #0369a1; margin-bottom: 0.5rem;">✨ Your workout will include:</h4>
+                <ul style="list-style: none; padding: 0; font-size: 0.9rem;">
+                    <li>✓ Warm-up and cool-down routines</li>
+                    <li>✓ Exercise descriptions and form tips</li>
+                    <li>✓ Sets, reps, and rest periods</li>
+                    <li>✓ Progression suggestions</li>
+                    <li>✓ Nutrition and hydration tips</li>
+                </ul>
+            </div>
+
+            <button class="btn-primary" onclick="generateWorkout()" id="generateBtn" style="margin-top: 1rem;">
+                <i class="fas fa-robot"></i> Generate My AI Workout Plan
+            </button>
+            <button class="btn-secondary" onclick="closeWorkoutModal()" style="margin-top: 0.5rem;">
+                Cancel
+            </button>
+        </div>
+    </div>
+</div>
+
+    <!-- Progress Update Modal -->
+    <div id="progressModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Update Your Progress</h2>
+                <button class="close-btn" onclick="closeProgressModal()">&times;</button>
+            </div>
+            
+            <div id="progressAlert" class="hidden"></div>
+
+            <div class="form-group">
+                <label for="currentWeight">Current Weight (kg)</label>
+                <input type="number" id="currentWeightInput" step="0.1" placeholder="Enter your current weight">
+            </div>
+
+            <div class="form-group">
+                <label for="workoutsCompleted">Workouts Completed Today</label>
+                <input type="number" id="workoutsCompleted" value="1" min="0" max="10">
+            </div>
+
+            <div class="form-group">
+                <label for="caloriesBurnedInput">Calories Burned</label>
+                <input type="number" id="caloriesBurnedInput" placeholder="Enter calories burned">
+            </div>
+
+            <div class="form-group">
+                <label for="minutesInput">Minutes Exercised</label>
+                <input type="number" id="minutesInput" placeholder="Enter minutes">
+            </div>
+
+            <div class="form-group">
+                <label for="notes">Notes (Optional)</label>
+                <input type="text" id="notes" placeholder="How was your workout?">
+            </div>
+
+            <button class="btn-primary" onclick="updateProgress()" id="updateProgressBtn">
+                Update Progress
+            </button>
+            <button class="btn-secondary" onclick="closeProgressModal()">
+                Cancel
+            </button>
+        </div>
+    </div>
+
+    <script>
+    // Profile Panel
+    function toggleProfilePanel() {
+        const panel = document.getElementById('profilePanel');
+        if (panel.style.transform === 'translateX(0px)') {
+            panel.style.transform = 'translateX(100%)';
+            setTimeout(() => {
+                panel.style.display = 'none';
+            }, 300);
+        } else {
+            panel.style.display = 'block';
+            setTimeout(() => {
+                panel.style.transform = 'translateX(0px)';
+            }, 10);
+        }
+    }
+
+    // Workout Modal
+    function showWorkoutModal() {
+        document.getElementById('workoutModal').classList.add('show');
+        document.getElementById('workoutAlert').classList.add('hidden');
+    }
+
+    function closeWorkoutModal() {
+        document.getElementById('workoutModal').classList.remove('show');
+    }
+
+    function showWorkoutAlert(message, type) {
+        const alert = document.getElementById('workoutAlert');
+        alert.textContent = message;
+        alert.className = `alert alert-${type}`;
+        alert.classList.remove('hidden');
+    }
+
+    // Generate Workout Function
+    // Generate Workout Function - UPDATED with timeout handling
+
+
+    // Enhanced Generate Workout Function
+
+    
+    
+    function generateWorkout() {
+    const goal = document.getElementById('goal').value;
+    const equipment = document.getElementById('equipment').value;
+    const level = document.querySelector('input[name="level"]:checked')?.value;
+
+    if (!goal || !equipment || !level) {
+        showWorkoutAlert('Please fill in all fields', 'error');
+        return;
+    }
+
+    const btn = document.getElementById('generateBtn');
+    btn.innerHTML = '<span class="spinner"></span> AI is creating your UNIQUE plan... (this takes 15-20 seconds)';
+    btn.disabled = true;
+
+    const data = {
+        goal: goal,
+        equipment: equipment,
+        level: level
+    };
+
+    fetch('/generate-schedule', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if(data.success) {
+            localStorage.setItem('currentSchedule', data.schedule);
+            window.location.href = '/schedule';
+        } else {
+            showWorkoutAlert('Error: ' + (data.error || 'Failed to generate schedule'), 'error');
+            btn.innerHTML = 'Generate Plan';
+            btn.disabled = false;
+        }
+    })
+    .catch(error => {
+        showWorkoutAlert('Error connecting to AI. Please try again.', 'error');
+        btn.innerHTML = 'Generate Plan';
+        btn.disabled = false;
+    });
+}
+   
+
+
+
+// Helper function to create personalized fallback schedule
+function getPersonalizedFallback(goal, level, equipment) {
+    let workout1, workout2, workout3;
+    
+    // Customize based on goal
+    if (goal === 'weight_loss') {
+        workout1 = 'High-intensity cardio focus';
+    } else if (goal === 'muscle_gain') {
+        workout1 = 'Strength training focus';
+    } else {
+        workout1 = 'Balanced full body workout';
+    }
+    
+    // Customize based on equipment
+    if (equipment.toLowerCase().includes('dumbbell')) {
+        return `YOUR PERSONALIZED 5-DAY PLAN (with dumbbells)
+Goal: ${goal} | Level: ${level}
+...
+`;
+    } else {
+        return `YOUR PERSONALIZED 5-DAY PLAN (bodyweight)
+Goal: ${goal} | Level: ${level}
+...
+`;
+    }
+}
+
+    // Progress Modal
+    function showProgressModal() {
+        document.getElementById('progressModal').classList.add('show');
+        document.getElementById('progressAlert').classList.add('hidden');
+    }
+
+    function closeProgressModal() {
+        document.getElementById('progressModal').classList.remove('show');
+    }
+
+    function showProgressAlert(message, type) {
+        const alert = document.getElementById('progressAlert');
+        alert.textContent = message;
+        alert.className = `alert alert-${type}`;
+        alert.classList.remove('hidden');
+    }
+
+    // Update Progress Function - FIXED
+    // Enhanced Generate Workout Function
+
+
+    // Update Progress Function - FIXED
+function updateProgress() {
+    const currentWeight = document.getElementById('currentWeightInput').value;
+    const workoutsCompleted = document.getElementById('workoutsCompleted').value;
+    const caloriesBurned = document.getElementById('caloriesBurnedInput').value;
+    const minutes = document.getElementById('minutesInput').value;
+    const notes = document.getElementById('notes').value;
+
+    // Get current values
+    let workoutsDone = parseInt(document.getElementById('workoutsDone').innerText) || 0;
+    let calories = parseInt(document.getElementById('caloriesBurned').innerText.replace(',', '')) || 0;
+    let totalMinutes = parseInt(document.getElementById('totalMinutes').innerText) || 0;
+
+    // Update weight if provided
+    if (currentWeight) {
+        document.getElementById('currentWeight').innerText = currentWeight + ' kg';
+        localStorage.setItem('currentWeight', currentWeight);
+        
+        // Calculate progress percentage
+        const startWeight = parseFloat(document.getElementById('startWeight').innerText) || 0;
+        const goalWeight = parseFloat(document.getElementById('goalWeight').innerText) || 0;
+        
+        let progressPercent = 0;
+        if (goalWeight > startWeight) {
+            // Weight gain goal
+            progressPercent = ((currentWeight - startWeight) / (goalWeight - startWeight)) * 100;
+        } else {
+            // Weight loss goal
+            progressPercent = ((startWeight - currentWeight) / (startWeight - goalWeight)) * 100;
+        }
+        
+        progressPercent = Math.min(100, Math.max(0, Math.round(progressPercent)));
+        document.getElementById('progressPercentage').innerText = progressPercent + '%';
+        document.getElementById('progressFill').style.width = progressPercent + '%';
+        localStorage.setItem('progressPercent', progressPercent);
+    }
+
+    // Update workouts if provided
+    if (workoutsCompleted && workoutsCompleted > 0) {
+        workoutsDone += parseInt(workoutsCompleted);
+        document.getElementById('workoutsDone').innerText = workoutsDone;
+        localStorage.setItem('workoutsDone', workoutsDone);
+    }
+
+    // Update calories if provided
+    if (caloriesBurned && caloriesBurned > 0) {
+        calories += parseInt(caloriesBurned);
+        document.getElementById('caloriesBurned').innerText = calories.toLocaleString();
+        localStorage.setItem('caloriesBurned', calories);
+    }
+
+    // Update minutes if provided
+    if (minutes && minutes > 0) {
+        totalMinutes += parseInt(minutes);
+        document.getElementById('totalMinutes').innerText = totalMinutes;
+        localStorage.setItem('totalMinutes', totalMinutes);
+    }
+
+    // Send to server
+    fetch('/update-progress', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+            current_weight: currentWeight,
+            notes: notes
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        showProgressAlert('Progress updated successfully! ✅', 'success');
+        setTimeout(() => {
+            closeProgressModal();
+        }, 1500);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showProgressAlert('Progress saved locally! ✅', 'success');
+        setTimeout(() => {
+            closeProgressModal();
+        }, 1500);
+    });
+}
+
+    // Close modals when clicking outside
+    window.onclick = function(event) {
+        const workoutModal = document.getElementById('workoutModal');
+        const progressModal = document.getElementById('progressModal');
+        const profilePanel = document.getElementById('profilePanel');
+        
+        if (event.target === workoutModal) {
+            closeWorkoutModal();
+        }
+        if (event.target === progressModal) {
+            closeProgressModal();
+        }
+    }
+
+    // Load saved data on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        // Load saved stats from localStorage
+
+        // Apply dark mode on page load
+    const savedDarkMode = localStorage.getItem('darkMode');
+    if (savedDarkMode === 'enabled') {
+        document.body.classList.add('dark-mode');
+    }
+
+        const savedWorkouts = localStorage.getItem('workoutsDone');
+        const savedCalories = localStorage.getItem('caloriesBurned');
+        const savedMinutes = localStorage.getItem('totalMinutes');
+        const savedWeight = localStorage.getItem('currentWeight');
+        
+        if (savedWorkouts) document.getElementById('workoutsDone').innerText = savedWorkouts;
+        if (savedCalories) document.getElementById('caloriesBurned').innerText = savedCalories;
+        if (savedMinutes) document.getElementById('totalMinutes').innerText = savedMinutes;
+        if (savedWeight) {
+            document.getElementById('currentWeight').innerText = savedWeight + ' kg';
+        }
+        
+        // Calculate progress percentage
+        const startWeight = parseFloat(document.getElementById('startWeight').innerText) || 0;
+        const currentWeight = parseFloat(document.getElementById('currentWeight').innerText) || 0;
+        const goalWeight = parseFloat(document.getElementById('goalWeight').innerText) || 0;
+        
+        if (startWeight > goalWeight && currentWeight > 0) {
+            // Weight loss goal
+            const progress = ((startWeight - currentWeight) / (startWeight - goalWeight)) * 100;
+            const progressPercent = Math.min(100, Math.max(0, Math.round(progress)));
+            document.getElementById('progressPercentage').innerText = progressPercent + '%';
+            document.getElementById('progressFill').style.width = progressPercent + '%';
+        }
+    });
+</script>
+</body>
+</html>

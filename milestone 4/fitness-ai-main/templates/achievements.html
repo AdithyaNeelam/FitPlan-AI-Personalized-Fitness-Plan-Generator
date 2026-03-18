@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Achievements - FitAI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #6b46c1;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: #4b5563;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #6b46c1;
+        }
+        
+        .profile-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #6b46c1;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            color: white;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .back-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s;
+        }
+        
+        .stats-overview {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #6b46c1;
+        }
+        
+        .level-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .level-number {
+            font-size: 5rem;
+            font-weight: bold;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 10px;
+            margin: 1rem 0;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: white;
+            width: 60%;
+        }
+        
+        .badges-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+        }
+        
+        .badge-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            text-align: center;
+            transition: transform 0.3s;
+            position: relative;
+        }
+        
+        .badge-card.locked {
+            opacity: 0.5;
+            filter: grayscale(1);
+        }
+        
+        .badge-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .badge-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+        
+        .badge-name {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        
+        .badge-desc {
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+        
+        .badge-date {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: #f3f4f6;
+            padding: 0.25rem 0.5rem;
+            border-radius: 1rem;
+            font-size: 0.8rem;
+        }
+        
+        @media (max-width: 768px) {
+            .stats-overview,
+            .badges-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        /* Dark mode styles */
+body.dark-mode {
+    background: #1a1a1a;
+    color: #e5e7eb;
+}
+
+body.dark-mode .navbar {
+    background: #2d2d2d;
+    color: white;
+}
+
+body.dark-mode .nav-links a {
+    color: #ddd;
+}
+
+body.dark-mode .nav-links a:hover {
+    color: #6b46c1;
+}
+
+body.dark-mode .card,
+body.dark-mode .sidebar,
+body.dark-mode .feed,
+body.dark-mode .chart-card,
+body.dark-mode .stat-card,
+body.dark-mode .goal-card,
+body.dark-mode .post,
+body.dark-mode .modal-content,
+body.dark-mode .settings-panel,
+body.dark-mode .left-sidebar,
+body.dark-mode .main-content,
+body.dark-mode .right-panel {
+    background: #2d2d2d;
+    color: #e5e7eb;
+    border-color: #4b5563;
+}
+
+body.dark-mode h1, 
+body.dark-mode h2, 
+body.dark-mode h3, 
+body.dark-mode h4,
+body.dark-mode .stat-value,
+body.dark-mode .goal-title,
+body.dark-mode .post-title,
+body.dark-mode .badge-name {
+    color: #f3f4f6;
+}
+
+body.dark-mode p,
+body.dark-mode .stat-label,
+body.dark-mode .post-meta,
+body.dark-mode .timeline-date,
+body.dark-mode .friend-name {
+    color: #9ca3af;
+}
+
+body.dark-mode input,
+body.dark-mode select,
+body.dark-mode textarea {
+    background: #374151;
+    border-color: #4b5563;
+    color: #e5e7eb;
+}
+
+body.dark-mode input:focus,
+body.dark-mode select:focus,
+body.dark-mode textarea:focus {
+    border-color: #6b46c1;
+}
+
+body.dark-mode .btn-outline {
+    border-color: #6b46c1;
+    color: #6b46c1;
+}
+
+body.dark-mode .btn-outline:hover {
+    background: #6b46c1;
+    color: white;
+}
+
+body.dark-mode .btn-secondary {
+    background: #374151;
+    color: #e5e7eb;
+    border-color: #4b5563;
+}
+
+body.dark-mode .btn-secondary:hover {
+    background: #4b5563;
+}
+
+body.dark-mode .progress-bar {
+    background: #4b5563;
+}
+
+body.dark-mode .progress-fill {
+    background: linear-gradient(90deg, #6b46c1, #38a169);
+}
+
+body.dark-mode .badge-card {
+    background: #374151;
+    color: #e5e7eb;
+}
+
+body.dark-mode .badge-card.locked {
+    opacity: 0.3;
+}
+
+body.dark-mode .friend-card,
+body.dark-mode .friend-item,
+body.dark-mode .post-item,
+body.dark-mode .timeline-item {
+    background: #374151;
+    border-color: #4b5563;
+}
+
+body.dark-mode .water-tracker {
+    background: #1e3a5f;
+}
+
+body.dark-mode .nutrition-tip {
+    background: #1f2937;
+}
+
+body.dark-mode .leaderboard-item {
+    border-color: #4b5563;
+}
+
+body.dark-mode .rank {
+    background: #4b5563;
+    color: #e5e7eb;
+}
+
+body.dark-mode .rank-1 { background: #b45309; }
+body.dark-mode .rank-2 { background: #6b7280; }
+body.dark-mode .rank-3 { background: #92400e; }
+
+body.dark-mode ::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+}
+
+body.dark-mode .close-btn {
+    color: #9ca3af;
+}
+
+body.dark-mode .close-btn:hover {
+    color: #f3f4f6;
+}
+
+body.dark-mode hr {
+    border-color: #4b5563;
+}
+
+body.dark-mode .alert-success {
+    background: #065f46;
+    color: #d1fae5;
+}
+
+body.dark-mode .alert-error {
+    background: #991b1b;
+    color: #fee2e2;
+}
+    </style>
+</head>
+<body>
+
+
+<!-- Navbar - Add these new links -->
+<nav class="navbar">
+    <div class="logo">
+        <i class="fas fa-dumbbell"></i>
+        <span>FitAI</span>
+    </div>
+    <div class="nav-links">
+        <a href="/dashboard">Dashboard</a>
+        <a href="/profile">Profile</a>
+        <a href="/analytics">📊 Analytics</a>
+        <a href="/achievements">🏆 Achievements</a>
+        <a href="/community">👥 Community</a>
+        <a href="/goals">🎯 Goals</a>
+        <a href="/calendar">📅 Calendar</a>
+        <a href="/music">🎵 Music</a>
+    </div>
+    <div class="profile-circle" onclick="window.location.href='/profile'">
+        {{ user.name[0]|upper }}
+    </div>
+</nav>
+
+
+
+
+    <div class="container">
+        <div class="header">
+            <h1>
+                <i class="fas fa-trophy"></i>
+                Achievements
+            </h1>
+            <a href="/dashboard" class="back-btn">
+                <i class="fas fa-arrow-left"></i> Dashboard
+            </a>
+        </div>
+        
+
+ <!-- Create Challenge Button -->
+    <div style="text-align: right; margin-bottom: 1rem;">
+        <button onclick="showCreateChallengeModal()" class="btn" style="background: #6b46c1; color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 0.5rem; cursor: pointer;">
+            <i class="fas fa-plus"></i> Create Challenge
+        </button>
+    </div>
+
+    <!-- Create Challenge Modal -->
+    <div id="challengeModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; z-index: 2000;">
+        <div style="background: white; border-radius: 1rem; padding: 2rem; max-width: 500px; width: 90%;">
+            <h3 style="margin-bottom: 1rem; color: #6b46c1;">Create New Challenge</h3>
+            <input type="text" id="challengeName" placeholder="Challenge Name" style="width: 100%; padding: 0.75rem; margin-bottom: 1rem; border: 2px solid #e5e7eb; border-radius: 0.5rem;">
+            <textarea id="challengeDesc" placeholder="Description" rows="3" style="width: 100%; padding: 0.75rem; margin-bottom: 1rem; border: 2px solid #e5e7eb; border-radius: 0.5rem;"></textarea>
+            
+            <select id="challengeType" style="width: 100%; padding: 0.75rem; margin-bottom: 1rem; border: 2px solid #e5e7eb; border-radius: 0.5rem;">
+                <option value="workouts">Workouts</option>
+                <option value="water">Water Intake (L)</option>
+                <option value="calories">Calories Burned</option>
+                <option value="custom">Custom</option>
+            </select>
+            
+            <input type="number" id="challengeGoal" placeholder="Goal Value" style="width: 100%; padding: 0.75rem; margin-bottom: 1rem; border: 2px solid #e5e7eb; border-radius: 0.5rem;">
+            <input type="date" id="challengeEndDate" style="width: 100%; padding: 0.75rem; margin-bottom: 1rem; border: 2px solid #e5e7eb; border-radius: 0.5rem;">
+            
+            <div style="display: flex; gap: 1rem;">
+                <button onclick="createChallenge()" class="btn" style="background: #6b46c1; color: white; flex: 1; padding: 0.75rem; border: none; border-radius: 0.5rem; cursor: pointer;">Create</button>
+                <button onclick="closeChallengeModal()" class="btn" style="background: #e53e3e; color: white; flex: 1; padding: 0.75rem; border: none; border-radius: 0.5rem; cursor: pointer;">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Challenges Container -->
+    <div id="challengesContainer">
+        <!-- Challenges will load here dynamically -->
+    </div>
+
+
+
+        <!-- Level & XP -->
+<div class="level-card">
+    <div>Current Level</div>
+    <div class="level-number" id="currentLevel">0</div>
+    <div class="progress-bar">
+        <div class="progress-fill" id="xpProgress" style="width: 0%;"></div>
+    </div>
+    <div><span id="currentXP">0</span> / <span id="totalXP">100</span> XP to Level <span id="xpToNext">1</span></div>
+</div>
+
+<!-- Stats Overview -->
+<div class="stats-overview">
+    <div class="stat-card">
+        <div class="stat-value" id="workoutCount">0</div>
+        <div>Workouts</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value" id="badgeCount">0</div>
+        <div>Badges</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value" id="streakCount">0</div>
+        <div>Day Streak</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value" id="challengeCount">0</div>
+        <div>Challenges</div>
+    </div>
+</div>
+
+
+<!-- Challenges -->
+        <h2 style="color: white; margin: 2rem 0 1rem;">⚡ Example Active Challenges</h2>
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem;">
+            <div style="background: white; border-radius: 1rem; padding: 1.5rem;">
+                <h3>💧 Water Challenge</h3>
+                <p>Drink 2.5L water daily for 7 days</p>
+                <div class="progress-bar" style="background: #e5e7eb;">
+                    <div class="progress-fill" style="width: 60%; background: #6b46c1;"></div>
+                </div>
+                <p><span id="waterCompleted">0</span>/<span id="waterTotal">7</span> days completed</p>
+            </div>
+            
+            <div style="background: white; border-radius: 1rem; padding: 1.5rem;">
+                <h3>🏋️ Workout Challenge</h3>
+                <p>Complete 5 workouts this week</p>
+                <div class="progress-bar" style="background: #e5e7eb;">
+                    <div class="progress-fill" style="width: 80%; background: #6b46c1;"></div>
+                </div>
+                <p><span id="workoutCompleted">0</span>/<span id="workoutTotal">5</span> workouts done</p>
+            </div>
+        </div>
+
+        <!-- Badges Grid -->
+        <h2 style="color: white; margin-bottom: 1rem;">🏅 Your Badges</h2>
+        <div class="badges-grid">
+            <div class="badge-card">
+                <div class="badge-icon">🎯</div>
+                <div class="badge-name">First Workout</div>
+                <div class="badge-desc">Completed your first workout</div>
+                <div class="badge-date">Mar 1, 2026</div>
+            </div>
+            
+            <div class="badge-card">
+                <div class="badge-icon">🔥</div>
+                <div class="badge-name">7-Day Streak</div>
+                <div class="badge-desc">Worked out 7 days in a row</div>
+                <div class="badge-date">Mar 8, 2026</div>
+            </div>
+            
+            <div class="badge-card">
+                <div class="badge-icon">💪</div>
+                <div class="badge-name">Getting Stronger</div>
+                <div class="badge-desc">Completed 10 workouts</div>
+                <div class="badge-date">Mar 5, 2026</div>
+            </div>
+            
+            <div class="badge-card locked">
+                <div class="badge-icon">⚡</div>
+                <div class="badge-name">30-Day Streak</div>
+                <div class="badge-desc">Workout for 30 days straight</div>
+                <div class="badge-date">Locked</div>
+            </div>
+            
+            <div class="badge-card">
+                <div class="badge-icon">🏋️</div>
+                <div class="badge-name">Weight Lifter</div>
+                <div class="badge-desc">Lifted 1000kg total</div>
+                <div class="badge-date">Mar 3, 2026</div>
+            </div>
+            
+            <div class="badge-card locked">
+                <div class="badge-icon">🏃</div>
+                <div class="badge-name">Marathon Ready</div>
+                <div class="badge-desc">Ran 42km total</div>
+                <div class="badge-date">Locked</div>
+            </div>
+            
+            <div class="badge-card">
+                <div class="badge-icon">🥗</div>
+                <div class="badge-name">Healthy Eater</div>
+                <div class="badge-desc">Logged 5 meals</div>
+                <div class="badge-date">Mar 2, 2026</div>
+            </div>
+            
+            <div class="badge-card">
+                <div class="badge-icon">🌅</div>
+                <div class="badge-name">Early Bird</div>
+                <div class="badge-desc">5 morning workouts</div>
+                <div class="badge-date">Mar 10, 2026</div>
+            </div>
+        </div>
+        
+        
+    </div>
+</body>
+
+<script>
+    // Function to show/hide challenge modal
+    function showCreateChallengeModal() {
+        document.getElementById('challengeModal').style.display = 'flex';
+    }
+
+    function closeChallengeModal() {
+        document.getElementById('challengeModal').style.display = 'none';
+    }
+
+    // Function to create a new challenge
+    async function createChallenge() {
+        const challenge = {
+            name: document.getElementById('challengeName').value,
+            description: document.getElementById('challengeDesc').value,
+            goal_type: document.getElementById('challengeType').value,
+            goal_value: parseInt(document.getElementById('challengeGoal').value),
+            unit: document.getElementById('challengeType').value === 'water' ? 'L' : 
+                  document.getElementById('challengeType').value === 'workouts' ? 'workouts' : '',
+            end_date: document.getElementById('challengeEndDate').value
+        };
+        
+        if (!challenge.name || !challenge.description || !challenge.goal_value || !challenge.end_date) {
+            alert('Please fill all fields');
+            return;
+        }
+        
+        const response = await fetch('/create-challenge', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(challenge)
+        });
+        
+        const data = await response.json();
+        if (data.success) {
+            alert('✅ Challenge created!');
+            closeChallengeModal();
+            loadChallenges(); // Reload challenges
+        }
+    }
+
+    async function loadLevelData() {
+    try {
+        const response = await fetch('/get-user-level');
+        const data = await response.json();
+        
+        document.getElementById('currentLevel').textContent = data.level;
+        document.getElementById('currentXP').textContent = data.current_xp;
+        document.getElementById('totalXP').textContent = '100';
+        document.getElementById('xpToNext').textContent = data.level + 1;
+        document.getElementById('xpProgress').style.width = data.progress + '%';
+    } catch (error) {
+        console.error('Error loading level:', error);
+    }
+}
+
+    // Function to load challenges
+    async function loadChallenges() {
+        try {
+            const response = await fetch('/get-challenges');
+            const data = await response.json();
+            
+            const container = document.getElementById('challengesContainer');
+            
+            // Active challenges section
+            let html = '<h2 style="color: white; margin: 2rem 0 1rem;">⚡ Your Active Challenges</h2>';
+            
+            if (data.active && data.active.length > 0) {
+                data.active.forEach(challenge => {
+                    const percentage = (challenge.current_value / challenge.goal_value) * 100;
+                    html += `
+                        <div style="background: white; border-radius: 1rem; padding: 1.5rem; margin-bottom: 1rem;">
+                            <h3 style="color: #6b46c1;">${challenge.name}</h3>
+                            <p style="color: #4b5563; margin-bottom: 1rem;">${challenge.description}</p>
+                            <div class="progress-bar" style="background: #e5e7eb; height: 10px; border-radius: 5px; overflow: hidden;">
+                                <div class="progress-fill" style="width: ${percentage}%; height: 100%; background: #6b46c1;"></div>
+                            </div>
+                            <p style="margin: 1rem 0; color: #4b5563;">Progress: ${challenge.current_value}/${challenge.goal_value} ${challenge.unit} • Ends: ${challenge.end_date}</p>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <input type="number" id="progress-${challenge.id}" placeholder="Update progress" style="flex: 1; padding: 0.5rem; border: 2px solid #e5e7eb; border-radius: 0.5rem;">
+                                <button onclick="updateChallenge(${challenge.id})" class="btn" style="background: #6b46c1; color: white; padding: 0.5rem 1rem; border: none; border-radius: 0.5rem; cursor: pointer;">Update</button>
+                            </div>
+                        </div>
+                    `;
+                });
+            } else {
+                html += '<p style="color: white; text-align: center;">No active challenges. Create one above! 👆</p>';
+            }
+            
+            // Completed challenges section
+            if (data.completed && data.completed.length > 0) {
+                html += '<h2 style="color: white; margin: 2rem 0 1rem;">✅ Completed Challenges</h2>';
+                data.completed.forEach(challenge => {
+                    html += `
+                        <div style="background: #f0fdf4; border-radius: 0.5rem; padding: 1rem; margin-bottom: 0.5rem; display: flex; justify-content: space-between;">
+                            <span style="color: #38a169;">✓ ${challenge.name}</span>
+                            <span style="color: #6b7280;">${challenge.end_date}</span>
+                        </div>
+                    `;
+                });
+            }
+            
+            container.innerHTML = html;
+            
+        } catch (error) {
+            console.error('Error loading challenges:', error);
+        }
+    }
+
+    // Function to update challenge progress
+    async function updateChallenge(challengeId) {
+        const value = document.getElementById(`progress-${challengeId}`).value;
+        if (!value) {
+            alert('Please enter a progress value');
+            return;
+        }
+        
+        const response = await fetch('/update-challenge', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                challenge_id: challengeId,
+                current_value: parseInt(value)
+            })
+        });
+        
+        const data = await response.json();
+        if (data.success) {
+            alert('✅ Progress updated!');
+            loadChallenges(); // Reload challenges
+            loadAchievements(); // Refresh achievements too
+        }
+    }
+
+    // Original loadAchievements function (keep this as is)
+    async function loadAchievements() {
+        try {
+            const response = await fetch('/get-achievements');
+            const data = await response.json();
+            
+            console.log("Achievements data:", data);
+            
+            // Update level and XP
+            document.getElementById('currentLevel').innerText = data.level || 0;
+            document.getElementById('currentXP').innerText = data.current_xp || 0;
+            document.getElementById('totalXP').innerText = data.total_xp || 0;
+            document.getElementById('xpToNext').innerText = data.xp_to_next || 0;
+            
+            // Update progress bar
+            const xpPercentage = ((data.current_xp || 0) / 100) * 100;
+            document.getElementById('xpProgress').style.width = xpPercentage + '%';
+            
+            // Update stats
+            document.getElementById('workoutCount').innerText = data.workout_count || 0;
+            document.getElementById('badgeCount').innerText = data.badge_count || 0;
+            document.getElementById('streakCount').innerText = data.streak || 0;
+            document.getElementById('challengeCount').innerText = data.challenge_count || 0;
+            
+            // Update challenges
+            if (data.water_challenge) {
+                const waterPercentage = (data.water_challenge.completed / data.water_challenge.total) * 100;
+                document.getElementById('waterProgress').style.width = waterPercentage + '%';
+                document.getElementById('waterCompleted').innerText = data.water_challenge.completed;
+                document.getElementById('waterTotal').innerText = data.water_challenge.total;
+            }
+            
+            if (data.workout_challenge) {
+                const workoutPercentage = (data.workout_challenge.completed / data.workout_challenge.total) * 100;
+                document.getElementById('workoutProgress').style.width = workoutPercentage + '%';
+                document.getElementById('workoutCompleted').innerText = data.workout_challenge.completed;
+                document.getElementById('workoutTotal').innerText = data.workout_challenge.total;
+            }
+            
+            // Update badges grid
+            const badgesGrid = document.querySelector('.badges-grid');
+            if (badgesGrid && data.achievements) {
+                badgesGrid.innerHTML = '';
+                data.achievements.forEach(badge => {
+                    const lockedClass = badge.earned ? '' : 'locked';
+                    badgesGrid.innerHTML += `
+                        <div class="badge-card ${lockedClass}">
+                            <div class="badge-icon">${badge.icon}</div>
+                            <div class="badge-name">${badge.name}</div>
+                            <div class="badge-desc">${badge.description}</div>
+                            <div class="badge-date">${badge.date}</div>
+                        </div>
+                    `;
+                });
+            }
+            
+        } catch (error) {
+            console.error('Error loading achievements:', error);
+        }
+    }
+
+    // Load on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        const savedDarkMode = localStorage.getItem('darkMode');
+    if (savedDarkMode === 'enabled') {
+        document.body.classList.add('dark-mode');
+    }
+        loadAchievements();
+        loadChallenges();
+        loadLevelData();
+    });
+</script>
+</html>

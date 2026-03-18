@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log Meal - FitAI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            color: white;
+        }
+        
+        .header h1 {
+            font-size: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .back-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s;
+        }
+        
+        .back-btn:hover {
+            background: white;
+            color: #11998e;
+        }
+        
+        .stats-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .stats-title {
+            color: #4b5563;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.1rem;
+        }
+        
+        .progress-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+        
+        .progress-item {
+            text-align: center;
+        }
+        
+        .progress-label {
+            color: #6b7280;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .progress-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #11998e;
+        }
+        
+        .progress-bar-bg {
+            width: 100%;
+            height: 10px;
+            background: #e5e7eb;
+            border-radius: 5px;
+            margin: 0.5rem 0;
+            overflow: hidden;
+        }
+        
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #11998e, #38ef7d);
+            border-radius: 5px;
+            transition: width 0.3s;
+        }
+        
+        .quick-meals {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .meal-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .meal-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(17, 153, 142, 0.3);
+        }
+        
+        .meal-emoji {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .meal-name {
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.25rem;
+        }
+        
+        .meal-calories {
+            color: #11998e;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        
+        .form-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .form-title {
+            color: #11998e;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.3rem;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #4b5563;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        label i {
+            color: #11998e;
+            margin-right: 0.5rem;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #11998e;
+            box-shadow: 0 0 0 3px rgba(17, 153, 142, 0.1);
+        }
+        
+        .macro-inputs {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+        }
+        
+        .macro-input {
+            text-align: center;
+        }
+        
+        .macro-unit {
+            color: #6b7280;
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #11998e, #38ef7d);
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.3s, box-shadow 0.3s;
+            margin-top: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(17, 153, 142, 0.3);
+        }
+        
+        .btn-primary:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+        
+        .btn-secondary {
+            background: #e5e7eb;
+            color: #1f2937;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            margin-top: 1rem;
+            display: inline-block;
+            text-decoration: none;
+        }
+        
+        .btn-secondary:hover {
+            background: #d1d5db;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .animate {
+            animation: slideIn 0.5s ease-out;
+        }
+        
+        .spinner {
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        @media (max-width: 640px) {
+            .quick-meals {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            .form-group.full-width {
+                grid-column: span 1;
+            }
+            .macro-inputs {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Dark mode styles */
+body.dark-mode {
+    background: #1a1a1a;
+    color: #e5e7eb;
+}
+
+body.dark-mode .navbar {
+    background: #2d2d2d;
+    color: white;
+}
+
+body.dark-mode .nav-links a {
+    color: #ddd;
+}
+
+body.dark-mode .nav-links a:hover {
+    color: #6b46c1;
+}
+
+body.dark-mode .card,
+body.dark-mode .sidebar,
+body.dark-mode .feed,
+body.dark-mode .chart-card,
+body.dark-mode .stat-card,
+body.dark-mode .goal-card,
+body.dark-mode .post,
+body.dark-mode .modal-content,
+body.dark-mode .settings-panel,
+body.dark-mode .left-sidebar,
+body.dark-mode .main-content,
+body.dark-mode .right-panel {
+    background: #2d2d2d;
+    color: #e5e7eb;
+    border-color: #4b5563;
+}
+
+body.dark-mode h1, 
+body.dark-mode h2, 
+body.dark-mode h3, 
+body.dark-mode h4,
+body.dark-mode .stat-value,
+body.dark-mode .goal-title,
+body.dark-mode .post-title,
+body.dark-mode .badge-name {
+    color: #f3f4f6;
+}
+
+body.dark-mode p,
+body.dark-mode .stat-label,
+body.dark-mode .post-meta,
+body.dark-mode .timeline-date,
+body.dark-mode .friend-name {
+    color: #9ca3af;
+}
+
+body.dark-mode input,
+body.dark-mode select,
+body.dark-mode textarea {
+    background: #374151;
+    border-color: #4b5563;
+    color: #e5e7eb;
+}
+
+body.dark-mode input:focus,
+body.dark-mode select:focus,
+body.dark-mode textarea:focus {
+    border-color: #6b46c1;
+}
+
+body.dark-mode .btn-outline {
+    border-color: #6b46c1;
+    color: #6b46c1;
+}
+
+body.dark-mode .btn-outline:hover {
+    background: #6b46c1;
+    color: white;
+}
+
+body.dark-mode .btn-secondary {
+    background: #374151;
+    color: #e5e7eb;
+    border-color: #4b5563;
+}
+
+body.dark-mode .btn-secondary:hover {
+    background: #4b5563;
+}
+
+body.dark-mode .progress-bar {
+    background: #4b5563;
+}
+
+body.dark-mode .progress-fill {
+    background: linear-gradient(90deg, #6b46c1, #38a169);
+}
+
+body.dark-mode .badge-card {
+    background: #374151;
+    color: #e5e7eb;
+}
+
+body.dark-mode .badge-card.locked {
+    opacity: 0.3;
+}
+
+body.dark-mode .friend-card,
+body.dark-mode .friend-item,
+body.dark-mode .post-item,
+body.dark-mode .timeline-item {
+    background: #374151;
+    border-color: #4b5563;
+}
+
+body.dark-mode .water-tracker {
+    background: #1e3a5f;
+}
+
+body.dark-mode .nutrition-tip {
+    background: #1f2937;
+}
+
+body.dark-mode .leaderboard-item {
+    border-color: #4b5563;
+}
+
+body.dark-mode .rank {
+    background: #4b5563;
+    color: #e5e7eb;
+}
+
+body.dark-mode .rank-1 { background: #b45309; }
+body.dark-mode .rank-2 { background: #6b7280; }
+body.dark-mode .rank-3 { background: #92400e; }
+
+body.dark-mode ::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+}
+
+body.dark-mode .close-btn {
+    color: #9ca3af;
+}
+
+body.dark-mode .close-btn:hover {
+    color: #f3f4f6;
+}
+
+body.dark-mode hr {
+    border-color: #4b5563;
+}
+
+body.dark-mode .alert-success {
+    background: #065f46;
+    color: #d1fae5;
+}
+
+body.dark-mode .alert-error {
+    background: #991b1b;
+    color: #fee2e2;
+}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>
+                <i class="fas fa-utensils"></i>
+                Log Your Meal
+            </h1>
+            <a href="/profile" class="back-btn">
+                <i class="fas fa-arrow-left"></i> Back
+            </a>
+        </div>
+        
+        <!-- Daily Progress Card -->
+        <div class="stats-card animate">
+            <div class="stats-title">
+                <i class="fas fa-chart-line"></i> Today's Progress
+            </div>
+            <div class="progress-grid">
+                <div class="progress-item">
+                    <div class="progress-label">Calories</div>
+                    <div class="progress-value" id="caloriesProgress">0</div>
+                    <div class="progress-bar-bg">
+                        <div class="progress-bar-fill" id="caloriesBar" style="width: 0%"></div>
+                    </div>
+                    <div style="color: #6b7280; font-size: 0.8rem;">Goal: 2000</div>
+                </div>
+                <div class="progress-item">
+                    <div class="progress-label">Protein</div>
+                    <div class="progress-value" id="proteinProgress">0g</div>
+                    <div class="progress-bar-bg">
+                        <div class="progress-bar-fill" id="proteinBar" style="width: 0%"></div>
+                    </div>
+                    <div style="color: #6b7280; font-size: 0.8rem;">Goal: 100g</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Quick Meal Templates -->
+        <h3 style="color: white; margin-bottom: 1rem;">
+            <i class="fas fa-bolt"></i> Quick Add
+        </h3>
+        <div class="quick-meals">
+            <div class="meal-card" data-type="breakfast" data-name="Oatmeal" data-calories="300" data-protein="12" data-carbs="45" data-fats="6">
+                <div class="meal-emoji">🥣</div>
+                <div class="meal-name">Oatmeal</div>
+                <div class="meal-calories">300 cal</div>
+            </div>
+            <div class="meal-card" data-type="lunch" data-name="Grilled Chicken" data-calories="350" data-protein="35" data-carbs="20" data-fats="8">
+                <div class="meal-emoji">🍗</div>
+                <div class="meal-name">Chicken</div>
+                <div class="meal-calories">350 cal</div>
+            </div>
+            <div class="meal-card" data-type="dinner" data-name="Salmon" data-calories="400" data-protein="30" data-carbs="15" data-fats="22">
+                <div class="meal-emoji">🐟</div>
+                <div class="meal-name">Salmon</div>
+                <div class="meal-calories">400 cal</div>
+            </div>
+            <div class="meal-card" data-type="snack" data-name="Greek Yogurt" data-calories="150" data-protein="15" data-carbs="8" data-fats="5">
+                <div class="meal-emoji">🥛</div>
+                <div class="meal-name">Yogurt</div>
+                <div class="meal-calories">150 cal</div>
+            </div>
+        </div>
+        
+        <!-- Main Form -->
+        <div class="form-card animate">
+            <h2 class="form-title">
+                <i class="fas fa-pen"></i> Meal Details
+            </h2>
+            
+            <form id="mealForm" onsubmit="logMeal(event)">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label><i class="fas fa-calendar"></i> Date</label>
+                        <input type="date" id="mealDate" value="{{ now.date() }}" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-clock"></i> Meal Type</label>
+                        <select id="mealType" required>
+                            <option value="breakfast">🍳 Breakfast</option>
+                            <option value="lunch">🍱 Lunch</option>
+                            <option value="dinner">🍽️ Dinner</option>
+                            <option value="snack">🥨 Snack</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group full-width">
+                        <label><i class="fas fa-utensils"></i> Food Name</label>
+                        <input type="text" id="foodName" placeholder="e.g., Grilled Chicken Salad" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-fire"></i> Calories</label>
+                        <input type="number" id="calories" min="0" placeholder="e.g., 350" required>
+                    </div>
+                    
+                    <div class="form-group full-width">
+                        <label><i class="fas fa-chart-pie"></i> Macros (Optional)</label>
+                        <div class="macro-inputs">
+                            <div class="macro-input">
+                                <input type="number" id="protein" min="0" placeholder="Protein (g)">
+                                <div class="macro-unit">g</div>
+                            </div>
+                            <div class="macro-input">
+                                <input type="number" id="carbs" min="0" placeholder="Carbs (g)">
+                                <div class="macro-unit">g</div>
+                            </div>
+                            <div class="macro-input">
+                                <input type="number" id="fats" min="0" placeholder="Fats (g)">
+                                <div class="macro-unit">g</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn-primary" id="submitBtn">
+                    <i class="fas fa-save"></i> Log Meal
+                </button>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        // Daily totals for progress bars
+        let dailyTotals = { calories: 0, protein: 0 };
+        
+        async function loadDailyTotals() {
+            try {
+                const response = await fetch('/get-daily-totals');
+                const data = await response.json();
+                dailyTotals = data;
+                updateProgressBars();
+            } catch (error) {
+                console.error('Error loading daily totals:', error);
+            }
+        }
+        
+        function updateProgressBars() {
+            const calorieGoal = 2000;
+            const proteinGoal = 100;
+            
+            const caloriesEl = document.getElementById('caloriesProgress');
+            const proteinEl = document.getElementById('proteinProgress');
+            const caloriesBar = document.getElementById('caloriesBar');
+            const proteinBar = document.getElementById('proteinBar');
+            
+            if (caloriesEl) caloriesEl.innerText = dailyTotals.calories;
+            if (caloriesBar) caloriesBar.style.width = Math.min(100, (dailyTotals.calories / calorieGoal * 100)) + '%';
+            if (proteinEl) proteinEl.innerText = dailyTotals.protein + 'g';
+            if (proteinBar) proteinBar.style.width = Math.min(100, (dailyTotals.protein / proteinGoal * 100)) + '%';
+        }
+        
+        function selectMeal(type, name, calories, protein, carbs, fats) {
+            document.getElementById('mealType').value = type;
+            document.getElementById('foodName').value = name;
+            document.getElementById('calories').value = calories;
+            document.getElementById('protein').value = protein;
+            document.getElementById('carbs').value = carbs;
+            document.getElementById('fats').value = fats;
+        }
+        
+        // Log Meal Function
+        async function logMeal(event) {
+            event.preventDefault();
+            
+            const meal = {
+                meal_type: document.getElementById('mealType').value,
+                food_name: document.getElementById('foodName').value,
+                calories: parseInt(document.getElementById('calories').value),
+                protein: parseFloat(document.getElementById('protein').value) || 0,
+                carbs: parseFloat(document.getElementById('carbs').value) || 0,
+                fats: parseFloat(document.getElementById('fats').value) || 0,
+                date: document.getElementById('mealDate').value
+            };
+            
+            // Validate
+            if (!meal.meal_type || !meal.food_name || !meal.calories) {
+                alert('Please fill in all required fields');
+                return;
+            }
+            
+            // Show loading state
+            const btn = document.getElementById('submitBtn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging...';
+            btn.disabled = true;
+            
+            try {
+                const response = await fetch('/log-meal', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(meal)
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('✅ Meal logged successfully!');
+                    window.location.href = '/progress';
+                } else {
+                    alert('❌ Failed to log meal. Please try again.');
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('❌ Error logging meal. Please try again.');
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+        
+        // Quick meal templates - attach click handlers
+        document.addEventListener('DOMContentLoaded', function() {
+            applyDarkMode();
+            const mealCards = document.querySelectorAll('.meal-card');
+            mealCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    const type = this.dataset.type || 'breakfast';
+                    const name = this.dataset.name || 'Oatmeal';
+                    const calories = parseInt(this.dataset.calories) || 300;
+                    const protein = parseInt(this.dataset.protein) || 10;
+                    const carbs = parseInt(this.dataset.carbs) || 30;
+                    const fats = parseInt(this.dataset.fats) || 5;
+                    
+                    selectMeal(type, name, calories, protein, carbs, fats);
+                    
+                    // Highlight selected card
+                    mealCards.forEach(c => c.style.border = 'none');
+                    this.style.border = '2px solid #11998e';
+                });
+            });
+            
+            // Load daily totals
+            loadDailyTotals();
+        });
+    </script>
+</body>
+</html>

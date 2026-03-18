@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics - FitAI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+            padding-top: 100px;
+        }
+        
+        /* Navbar Styles */
+        .navbar {
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #6b46c1;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: #4b5563;
+            font-weight: 500;
+        }
+        
+        .nav-links a:hover {
+            color: #6b46c1;
+        }
+        
+        .profile-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #6b46c1;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            color: white;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .back-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s;
+        }
+        
+        .back-btn:hover {
+            background: white;
+            color: #6b46c1;
+        }
+        
+        .date-range {
+            background: white;
+            border-radius: 0.5rem;
+            padding: 0.5rem;
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .date-range button {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .date-range button.active {
+            background: #6b46c1;
+            color: white;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #6b46c1;
+            margin-bottom: 1rem;
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #1f2937;
+        }
+        
+        .stat-change {
+            font-size: 0.9rem;
+            color: #38a169;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .chart-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .chart-title {
+            font-weight: 600;
+            color: #1f2937;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .chart-legend {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.9rem;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+        }
+        
+        .progress-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .progress-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+        
+        .progress-label {
+            color: #6b7280;
+        }
+        
+        .progress-percent {
+            font-weight: 600;
+            color: #6b46c1;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #e5e7eb;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #6b46c1, #38a169);
+            border-radius: 5px;
+            transition: width 0.3s;
+        }
+        
+        .progress-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: #6b7280;
+        }
+        
+        .insights-section {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .insights-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+        
+        .insight-card {
+            background: #f3f4f6;
+            border-radius: 0.5rem;
+            padding: 1rem;
+        }
+        
+        .insight-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .insight-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        
+        .insight-text {
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+        
+        .trend-up { color: #38a169; }
+        .trend-down { color: #e53e3e; }
+        
+        @media (max-width: 768px) {
+            .stats-grid,
+            .charts-grid,
+            .progress-grid,
+            .insights-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Dark mode styles */
+body.dark-mode {
+    background: #1a1a1a;
+    color: #e5e7eb;
+}
+
+body.dark-mode .navbar {
+    background: #2d2d2d;
+    color: white;
+}
+
+body.dark-mode .nav-links a {
+    color: #ddd;
+}
+
+body.dark-mode .nav-links a:hover {
+    color: #6b46c1;
+}
+
+body.dark-mode .card,
+body.dark-mode .sidebar,
+body.dark-mode .feed,
+body.dark-mode .chart-card,
+body.dark-mode .stat-card,
+body.dark-mode .goal-card,
+body.dark-mode .post,
+body.dark-mode .modal-content,
+body.dark-mode .settings-panel,
+body.dark-mode .left-sidebar,
+body.dark-mode .main-content,
+body.dark-mode .right-panel {
+    background: #2d2d2d;
+    color: #e5e7eb;
+    border-color: #4b5563;
+}
+
+body.dark-mode h1, 
+body.dark-mode h2, 
+body.dark-mode h3, 
+body.dark-mode h4,
+body.dark-mode .stat-value,
+body.dark-mode .goal-title,
+body.dark-mode .post-title,
+body.dark-mode .badge-name {
+    color: #f3f4f6;
+}
+
+body.dark-mode p,
+body.dark-mode .stat-label,
+body.dark-mode .post-meta,
+body.dark-mode .timeline-date,
+body.dark-mode .friend-name {
+    color: #9ca3af;
+}
+
+body.dark-mode input,
+body.dark-mode select,
+body.dark-mode textarea {
+    background: #374151;
+    border-color: #4b5563;
+    color: #e5e7eb;
+}
+
+body.dark-mode input:focus,
+body.dark-mode select:focus,
+body.dark-mode textarea:focus {
+    border-color: #6b46c1;
+}
+
+body.dark-mode .btn-outline {
+    border-color: #6b46c1;
+    color: #6b46c1;
+}
+
+body.dark-mode .btn-outline:hover {
+    background: #6b46c1;
+    color: white;
+}
+
+body.dark-mode .btn-secondary {
+    background: #374151;
+    color: #e5e7eb;
+    border-color: #4b5563;
+}
+
+body.dark-mode .btn-secondary:hover {
+    background: #4b5563;
+}
+
+body.dark-mode .progress-bar {
+    background: #4b5563;
+}
+
+body.dark-mode .progress-fill {
+    background: linear-gradient(90deg, #6b46c1, #38a169);
+}
+
+body.dark-mode .badge-card {
+    background: #374151;
+    color: #e5e7eb;
+}
+
+body.dark-mode .badge-card.locked {
+    opacity: 0.3;
+}
+
+body.dark-mode .friend-card,
+body.dark-mode .friend-item,
+body.dark-mode .post-item,
+body.dark-mode .timeline-item {
+    background: #374151;
+    border-color: #4b5563;
+}
+
+body.dark-mode .water-tracker {
+    background: #1e3a5f;
+}
+
+body.dark-mode .nutrition-tip {
+    background: #1f2937;
+}
+
+body.dark-mode .leaderboard-item {
+    border-color: #4b5563;
+}
+
+body.dark-mode .rank {
+    background: #4b5563;
+    color: #e5e7eb;
+}
+
+body.dark-mode .rank-1 { background: #b45309; }
+body.dark-mode .rank-2 { background: #6b7280; }
+body.dark-mode .rank-3 { background: #92400e; }
+
+body.dark-mode ::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+}
+
+body.dark-mode .close-btn {
+    color: #9ca3af;
+}
+
+body.dark-mode .close-btn:hover {
+    color: #f3f4f6;
+}
+
+body.dark-mode hr {
+    border-color: #4b5563;
+}
+
+body.dark-mode .alert-success {
+    background: #065f46;
+    color: #d1fae5;
+}
+
+body.dark-mode .alert-error {
+    background: #991b1b;
+    color: #fee2e2;
+}
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo">
+            <i class="fas fa-dumbbell"></i>
+            <span>FitAI</span>
+        </div>
+        <div class="nav-links">
+            <a href="/dashboard">Dashboard</a>
+            <a href="/profile">Profile</a>
+            <a href="/analytics" style="color: #6b46c1;">📊 Analytics</a>
+            <a href="/achievements">🏆 Achievements</a>
+            <a href="/community">👥 Community</a>
+            <a href="/goals">🎯 Goals</a>
+            <a href="/calendar">📅 Calendar</a>
+            <a href="/music">🎵 Music</a>
+        </div>
+        <div class="profile-circle" onclick="window.location.href='/profile'">
+            {{ user.name[0]|upper }}
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="header">
+            <h1>
+                <i class="fas fa-chart-line"></i>
+                Advanced Analytics
+            </h1>
+            <a href="/dashboard" class="back-btn">
+                <i class="fas fa-arrow-left"></i> Dashboard
+            </a>
+        </div>
+
+        <!-- Date Range Selector -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+            <div class="date-range">
+                <button class="active" onclick="changeDateRange('week')">Week</button>
+                <button onclick="changeDateRange('month')">Month</button>
+                <button onclick="changeDateRange('year')">Year</button>
+                <button onclick="changeDateRange('all')">All Time</button>
+            </div>
+        </div>
+
+        <!-- Key Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <i class="fas fa-fire"></i>
+                    <span>Total Calories</span>
+                </div>
+                <div class="stat-value" id="totalCalories">0</div>
+                <div class="stat-change">
+                    <i class="fas fa-arrow-up"></i> 12% from last month
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <i class="fas fa-clock"></i>
+                    <span>Workout Minutes</span>
+                </div>
+                <div class="stat-value" id="totalMinutes">0</div>
+                <div class="stat-change">
+                    <i class="fas fa-arrow-up"></i> 8% from last month
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <i class="fas fa-dumbbell"></i>
+                    <span>Total Workouts</span>
+                </div>
+                <div class="stat-value" id="totalWorkouts">0</div>
+                <div class="stat-change">
+                    <i class="fas fa-arrow-up"></i> 15% from last month
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <i class="fas fa-trophy"></i>
+                    <span>Best Streak</span>
+                </div>
+                <div class="stat-value" id="bestStreak">0</div>
+                <div class="stat-change">
+                    <span>Current: <span id="currentStreak">0</span> days</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Grid -->
+        <div class="charts-grid">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div class="chart-title">
+                        <i class="fas fa-calendar-week"></i>
+                        Weekly Workout Frequency
+                    </div>
+                </div>
+                <canvas id="weeklyChart"></canvas>
+            </div>
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div class="chart-title">
+                        <i class="fas fa-fire"></i>
+                        Calories Burned Trend
+                    </div>
+                </div>
+                <canvas id="caloriesChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Progress Tracking -->
+        <div class="progress-grid">
+            <div class="progress-card">
+                <div class="progress-header">
+                    <span class="progress-label">Weight Progress</span>
+                    <span class="progress-percent" id="weightPercent">0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="weightProgress" style="width: 0%"></div>
+                </div>
+                <div class="progress-stats">
+                    <span>Start: <span id="startWeight">0</span> kg</span>
+                    <span>Current: <span id="currentWeight">0</span> kg</span>
+                    <span>Goal: <span id="goalWeight">0</span> kg</span>
+                </div>
+            </div>
+            <div class="progress-card">
+                <div class="progress-header">
+                    <span class="progress-label">Workout Goal</span>
+                    <span class="progress-percent" id="workoutPercent">0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="workoutProgress" style="width: 0%"></div>
+                </div>
+                <div class="progress-stats">
+                    <span>Completed: <span id="completedWorkouts">0</span></span>
+                    <span>Target: <span id="targetWorkouts">20</span></span>
+                </div>
+            </div>
+            <div class="progress-card">
+                <div class="progress-header">
+                    <span class="progress-label">Strength Progress</span>
+                    <span class="progress-percent" id="strengthPercent">0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="strengthProgress" style="width: 0%"></div>
+                </div>
+                <div class="progress-stats">
+                    <span>Bench: <span id="benchPR">0</span> kg</span>
+                    <span>Squat: <span id="squatPR">0</span> kg</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Workout Distribution -->
+        <div class="charts-grid">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div class="chart-title">
+                        <i class="fas fa-chart-pie"></i>
+                        Workout Type Distribution
+                    </div>
+                </div>
+                <canvas id="distributionChart"></canvas>
+            </div>
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div class="chart-title">
+                        <i class="fas fa-clock"></i>
+                        Workout Time of Day
+                    </div>
+                </div>
+                <canvas id="timeChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Insights Section -->
+        <div class="insights-section">
+            <h3 style="color: #6b46c1; margin-bottom: 1rem;">💡 Personalized Insights</h3>
+            <div class="insights-grid" id="insights">
+                <!-- Insights will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Nutrition Summary -->
+        <div class="charts-grid">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div class="chart-title">
+                        <i class="fas fa-utensils"></i>
+                        Calorie Intake vs Burn
+                    </div>
+                </div>
+                <canvas id="nutritionChart"></canvas>
+            </div>
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div class="chart-title">
+                        <i class="fas fa-chart-bar"></i>
+                        Macronutrient Split
+                    </div>
+                </div>
+                <canvas id="macroChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+         
+        
+
+    <script>
+    let currentRange = 'week';
+
+    function changeDateRange(range) {
+        currentRange = range;
+        document.querySelectorAll('.date-range button').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        event.target.classList.add('active');
+        loadAnalyticsData();
+    }
+
+    async function loadAnalyticsData() {
+        try {
+            const response = await fetch(`/get-analytics-data?range=${currentRange}`);
+            const data = await response.json();
+            
+            console.log("Analytics data:", data);
+            
+            // Update stats
+            document.getElementById('totalCalories').textContent = data.stats.totalCaloriesBurned.toLocaleString();
+            document.getElementById('totalMinutes').textContent = data.stats.totalMinutes;
+            document.getElementById('totalWorkouts').textContent = data.stats.totalWorkouts;
+            document.getElementById('bestStreak').textContent = data.stats.bestStreak;
+            document.getElementById('currentStreak').textContent = data.stats.currentStreak;
+            
+            // Update weight progress
+            document.getElementById('startWeight').textContent = data.progress.weightStart;
+            document.getElementById('currentWeight').textContent = data.progress.weightCurrent;
+            document.getElementById('goalWeight').textContent = data.progress.weightGoal;
+            
+            const weightPercent = Math.round(data.progress.weightProgress);
+            document.getElementById('weightPercent').textContent = weightPercent + '%';
+            document.getElementById('weightProgress').style.width = weightPercent + '%';
+            
+            // Update workout progress
+            document.getElementById('completedWorkouts').textContent = data.stats.totalWorkouts;
+            document.getElementById('targetWorkouts').textContent = '50';
+            const workoutPercent = Math.round(data.progress.workoutProgress);
+            document.getElementById('workoutPercent').textContent = workoutPercent + '%';
+            document.getElementById('workoutProgress').style.width = workoutPercent + '%';
+            
+            // Update strength progress
+            document.getElementById('benchPR').textContent = data.progress.strengthPRs.bench;
+            document.getElementById('squatPR').textContent = data.progress.strengthPRs.squat;
+            const strengthPercent = Math.round(((data.progress.strengthPRs.bench + data.progress.strengthPRs.squat) / 250) * 100);
+            document.getElementById('strengthPercent').textContent = strengthPercent + '%';
+            document.getElementById('strengthProgress').style.width = strengthPercent + '%';
+            
+            // Load insights
+            const insightsHTML = data.insights.map(insight => `
+                <div class="insight-card">
+                    <div class="insight-icon">${insight.icon}</div>
+                    <div class="insight-title">${insight.title}</div>
+                    <div class="insight-text">${insight.text}</div>
+                </div>
+            `).join('');
+            document.getElementById('insights').innerHTML = insightsHTML;
+            
+            // Update charts
+            updateCharts(data.charts);
+            
+        } catch (error) {
+            console.error('Error loading analytics:', error);
+        }
+    }
+
+    function updateCharts(chartData) {
+        // Weekly Workout Chart
+        new Chart(document.getElementById('weeklyChart'), {
+            type: 'line',
+            data: {
+                labels: chartData.weekLabels,
+                datasets: [{
+                    label: 'Workouts',
+                    data: chartData.weeklyWorkouts,
+                    borderColor: '#6b46c1',
+                    backgroundColor: 'rgba(107, 70, 193, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } }
+            }
+        });
+
+        // Calories Chart
+        new Chart(document.getElementById('caloriesChart'), {
+            type: 'bar',
+            data: {
+                labels: chartData.weekLabels,
+                datasets: [{
+                    label: 'Calories',
+                    data: chartData.weeklyCalories,
+                    backgroundColor: '#6b46c1'
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { display: false } }
+            }
+        });
+
+        // Distribution Chart
+        new Chart(document.getElementById('distributionChart'), {
+            type: 'doughnut',
+            data: {
+                labels: chartData.distributionLabels,
+                datasets: [{
+                    data: chartData.distribution,
+                    backgroundColor: ['#6b46c1', '#38a169', '#fbbf24', '#e53e3e']
+                }]
+            }
+        });
+
+        // Time of Day Chart
+        new Chart(document.getElementById('timeChart'), {
+            type: 'pie',
+            data: {
+                labels: ['Morning', 'Afternoon', 'Evening'],
+                datasets: [{
+                    data: Object.values(chartData.timeDistribution),
+                    backgroundColor: ['#fbbf24', '#38a169', '#6b46c1']
+                }]
+            }
+        });
+
+        // Nutrition Chart
+        new Chart(document.getElementById('nutritionChart'), {
+            type: 'bar',
+            data: {
+                labels: chartData.weekLabels,
+                datasets: [
+                    {
+                        label: 'Calories Consumed',
+                        data: chartData.nutrition.caloriesConsumed,
+                        backgroundColor: '#38a169'
+                    },
+                    {
+                        label: 'Calories Burned',
+                        data: chartData.nutrition.caloriesBurned,
+                        backgroundColor: '#6b46c1'
+                    }
+                ]
+            }
+        });
+
+        // Macro Chart
+        new Chart(document.getElementById('macroChart'), {
+            type: 'bar',
+            data: {
+                labels: ['Protein', 'Carbs', 'Fats'],
+                datasets: [{
+                    data: [chartData.macros.protein, chartData.macros.carbs, chartData.macros.fats],
+                    backgroundColor: ['#e53e3e', '#38a169', '#fbbf24']
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                plugins: { legend: { display: false } }
+            }
+        });
+    }
+
+    // Load on page load
+    document.addEventListener('DOMContentLoaded', () => {
+        applyDarkMode();
+        loadAnalyticsData();
+    });
+</script>
+</body>
+</html>

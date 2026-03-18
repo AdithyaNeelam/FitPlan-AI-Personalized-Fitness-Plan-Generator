@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your 5-Day Schedule - FitAI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        /* Header Styles */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            color: white;
+        }
+        
+        .header h1 {
+            font-size: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .back-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+        
+        .back-btn:hover {
+            background: white;
+            color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        /* Schedule Card */
+        .schedule-card {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 2rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        
+        .schedule-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px dashed #e5e7eb;
+        }
+        
+        .schedule-header h2 {
+            color: #6b46c1;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .schedule-meta {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            color: #6b7280;
+            font-size: 1.1rem;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .meta-item i {
+            color: #6b46c1;
+        }
+        
+        /* Days Grid */
+        .days-grid {
+            display: grid;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .day-card {
+            background: #f9fafb;
+            border-radius: 1rem;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .day-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(107, 70, 193, 0.2);
+        }
+        
+        .day-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .day-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .day-title i {
+            font-size: 1.5rem;
+        }
+        
+        .day-focus {
+            background: rgba(255,255,255,0.2);
+            padding: 0.25rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        .day-content {
+            padding: 1.5rem;
+        }
+        
+        .exercise-list {
+            list-style: none;
+        }
+        
+        .exercise-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem;
+            border-bottom: 1px solid #e5e7eb;
+            transition: background 0.3s;
+        }
+        
+        .exercise-item:last-child {
+            border-bottom: none;
+        }
+        
+        .exercise-item:hover {
+            background: #f3f4f6;
+            border-radius: 0.5rem;
+        }
+        
+        .exercise-number {
+            width: 30px;
+            height: 30px;
+            background: #6b46c1;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 1rem;
+            font-size: 0.9rem;
+        }
+        
+        .exercise-name {
+            flex: 2;
+            font-weight: 600;
+            color: #1f2937;
+            font-size: 1rem;
+        }
+        
+        .exercise-details {
+            flex: 1;
+            color: #6b46c1;
+            font-weight: 600;
+            text-align: right;
+            background: #f3f4f6;
+            padding: 0.25rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.9rem;
+        }
+        
+        /* Warm-up and Cool-down special styling */
+        .exercise-item.warmup {
+            background: #e0f2fe;
+        }
+        
+        .exercise-item.warmup .exercise-number {
+            background: #0284c7;
+        }
+        
+        .exercise-item.cooldown {
+            background: #fef3c7;
+        }
+        
+        .exercise-item.cooldown .exercise-number {
+            background: #d97706;
+        }
+        
+        /* Tip Section */
+        .tip-section {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e6fffa 100%);
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-left: 5px solid #6b46c1;
+        }
+        
+        .tip-icon {
+            font-size: 3rem;
+        }
+        
+        .tip-content {
+            flex: 1;
+        }
+        
+        .tip-title {
+            font-weight: bold;
+            color: #0369a1;
+            margin-bottom: 0.25rem;
+            font-size: 1.1rem;
+        }
+        
+        .tip-text {
+            color: #0284c7;
+            font-style: italic;
+            line-height: 1.6;
+        }
+        
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .btn-primary {
+            background: white;
+            color: #6b46c1;
+            border: 2px solid #6b46c1;
+            padding: 0.75rem 2rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+        
+        .btn-primary:hover {
+            background: #6b46c1;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(107, 70, 193, 0.3);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+            padding: 0.75rem 2rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s;
+        }
+        
+        .btn-secondary:hover {
+            background: white;
+            color: #6b46c1;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255,255,255,0.3);
+        }
+        
+        /* Animations */
+        @keyframes slideIn {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .day-card {
+            animation: slideIn 0.5s ease-out forwards;
+            opacity: 0;
+        }
+        
+        .day-card:nth-child(1) { animation-delay: 0.1s; }
+        .day-card:nth-child(2) { animation-delay: 0.2s; }
+        .day-card:nth-child(3) { animation-delay: 0.3s; }
+        .day-card:nth-child(4) { animation-delay: 0.4s; }
+        .day-card:nth-child(5) { animation-delay: 0.5s; }
+        
+        /* Loading State */
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: #6b7280;
+        }
+        
+        .loading i {
+            font-size: 3rem;
+            color: #6b46c1;
+            margin-bottom: 1rem;
+            animation: spin 2s linear infinite;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .schedule-meta {
+                flex-direction: column;
+                gap: 0.5rem;
+                align-items: center;
+            }
+            
+            .day-header {
+                flex-direction: column;
+                gap: 0.5rem;
+                text-align: center;
+            }
+            
+            .exercise-item {
+                flex-direction: column;
+                text-align: center;
+                gap: 0.5rem;
+            }
+            
+            .exercise-number {
+                margin-right: 0;
+            }
+            
+            .exercise-details {
+                text-align: center;
+                width: 100%;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .btn-primary, .btn-secondary {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+        
+        /* Print Styles */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            
+            .header, .action-buttons, .back-btn {
+                display: none;
+            }
+            
+            .schedule-card {
+                box-shadow: none;
+                padding: 1rem;
+            }
+            
+            .day-card {
+                break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>
+                <i class="fas fa-calendar-alt"></i>
+                Your 5-Day Schedule
+            </h1>
+            <a href="/dashboard" class="back-btn">
+                <i class="fas fa-arrow-left"></i> Dashboard
+            </a>
+        </div>
+        
+        <!-- Main Schedule Card -->
+        <div class="schedule-card">
+            <!-- Schedule Header -->
+            <div class="schedule-header">
+                <h2>
+                    <i class="fas fa-dumbbell"></i>
+                    Personalized Workout Plan
+                </h2>
+                <div class="schedule-meta">
+                    <span class="meta-item">
+                        <i class="fas fa-user"></i> 
+                        <span id="userName">{{ user.name }}</span>
+                    </span>
+                    <span class="meta-item">
+                        <i class="fas fa-fire"></i> 
+                        <span id="userLevel">{{ user.fitness_level|capitalize }}</span>
+                    </span>
+                </div>
+            </div>
+            
+            <!-- Schedule Display Area -->
+            <div id="scheduleDisplay" class="days-grid">
+                <div class="loading">
+                    <i class="fas fa-circle-notch"></i>
+                    <p>Loading your personalized schedule...</p>
+                </div>
+            </div>
+            
+            <!-- Tips Section -->
+            <div class="tip-section">
+                <div class="tip-icon">💪</div>
+                <div class="tip-content">
+                    <div class="tip-title">Pro Tip</div>
+                    <div class="tip-text" id="dailyTip">
+                        Stay hydrated throughout your workout and rest 60-90 seconds between sets for optimal recovery.
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button onclick="saveSchedule()" class="btn-primary">
+                    <i class="fas fa-save"></i> Save Schedule
+                </button>
+                <button onclick="printSchedule()" class="btn-primary">
+                    <i class="fas fa-print"></i> Print
+                </button>
+                <a href="/generate-workout" class="btn-secondary">
+                    <i class="fas fa-redo"></i> Generate New
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Load and display the schedule with proper formatting
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedSchedule = localStorage.getItem('currentSchedule');
+            const displayElement = document.getElementById('scheduleDisplay');
+            
+            if (savedSchedule && savedSchedule.length > 50) {
+                // Parse the schedule into days
+                const days = savedSchedule.split(/DAY \d+/i).filter(d => d.trim());
+                let html = '';
+                
+                days.forEach((day, index) => {
+                    if (index >= 5) return; // Max 5 days
+                    
+                    const lines = day.split('\n').filter(l => l.trim());
+                    const focusLine = lines[0] || 'Workout Day';
+                    
+                    html += `
+                        <div class="day-card">
+                            <div class="day-header">
+                                <div class="day-title">
+                                    <i class="fas fa-calendar-day"></i> Day ${index + 1}
+                                </div>
+                                <div class="day-focus">${focusLine}</div>
+                            </div>
+                            <div class="day-content">
+                                <ul class="exercise-list">
+                    `;
+                    
+                    // Add exercises
+                    for (let i = 1; i < lines.length; i++) {
+                        const line = lines[i].trim();
+                        if (!line) continue;
+                        
+                        // Check if it's warm-up or cool-down
+                        let itemClass = 'exercise-item';
+                        if (line.toLowerCase().includes('warm')) itemClass += ' warmup';
+                        if (line.toLowerCase().includes('cool')) itemClass += ' cooldown';
+                        
+                        // Try to parse exercise and details
+                        const parts = line.split('-');
+                        if (parts.length > 1) {
+                            html += `
+                                <li class="${itemClass}">
+                                    <span class="exercise-number">${i}</span>
+                                    <span class="exercise-name">${parts[0].trim()}</span>
+                                    <span class="exercise-details">${parts[1].trim()}</span>
+                                </li>
+                            `;
+                        } else {
+                            html += `
+                                <li class="${itemClass}">
+                                    <span class="exercise-number">${i}</span>
+                                    <span class="exercise-name">${line}</span>
+                                </li>
+                            `;
+                        }
+                    }
+                    
+                    html += `
+                                </ul>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                // Update tips based on day
+                const tips = [
+                    "Focus on form over weight - quality reps matter more!",
+                    "Stay hydrated: Drink water before, during, and after your workout.",
+                    "Get 7-8 hours of sleep for optimal muscle recovery.",
+                    "Eat protein within 30 minutes after workout for best results.",
+                    "Consistency is key - even 80% effort consistently beats 100% occasionally!"
+                ];
+                
+                const randomTip = tips[Math.floor(Math.random() * tips.length)];
+                document.querySelector('.tip-text').textContent = randomTip;
+                
+                displayElement.innerHTML = html;
+                
+                // Extract user info
+                const nameMatch = savedSchedule.match(/For: ([^\n|]+)/i);
+                const levelMatch = savedSchedule.match(/Level: ([^\n|]+)/i);
+                
+                if (nameMatch) document.getElementById('userName').textContent = nameMatch[1].trim();
+                if (levelMatch) document.getElementById('userLevel').textContent = levelMatch[1].trim();
+                
+            } else {
+                displayElement.innerHTML = `
+                    <div style="text-align: center; padding: 3rem; background: #f9fafb; border-radius: 1rem;">
+                        <i class="fas fa-dumbbell" style="font-size: 4rem; color: #6b46c1; margin-bottom: 1rem;"></i>
+                        <h3 style="color: #1f2937; margin-bottom: 1rem;">No Schedule Generated</h3>
+                        <p style="color: #6b7280; margin-bottom: 2rem;">Go to Dashboard and click "Generate Workout Plan" to create your personalized 5-day schedule.</p>
+                        <a href="/dashboard" style="display: inline-block; padding: 0.75rem 2rem; background: #6b46c1; color: white; text-decoration: none; border-radius: 0.5rem; font-weight: 600;">
+                            <i class="fas fa-arrow-left"></i> Go to Dashboard
+                        </a>
+                    </div>
+                `;
+            }
+        });
+        
+        function saveSchedule() {
+            const schedule = localStorage.getItem('currentSchedule');
+            if (schedule) {
+                const blob = new Blob([schedule], { type: 'text/plain' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `fitness-schedule-${new Date().toISOString().slice(0,10)}.txt`;
+                a.click();
+                window.URL.revokeObjectURL(url);
+                
+                // Show success notification
+                alert('✅ Schedule saved to your downloads folder!');
+            } else {
+                alert('No schedule found to save!');
+            }
+        }
+        
+        function printSchedule() {
+            const schedule = document.getElementById('scheduleDisplay').innerText;
+            if (schedule) {
+                const printWindow = window.open('', '_blank');
+                printWindow.document.write(`
+                    <html>
+                        <head>
+                            <title>Your Fitness Schedule</title>
+                            <style>
+                                body { 
+                                    font-family: Arial, sans-serif; 
+                                    padding: 2rem; 
+                                    line-height: 1.6;
+                                    max-width: 800px;
+                                    margin: 0 auto;
+                                }
+                                h1 { color: #6b46c1; }
+                                .day { 
+                                    margin-bottom: 2rem;
+                                    padding: 1rem;
+                                    border: 1px solid #ddd;
+                                    border-radius: 0.5rem;
+                                }
+                                .day h2 { color: #6b46c1; }
+                                .exercise { margin: 0.5rem 0; }
+                                @media print {
+                                    body { padding: 0; }
+                                }
+                            </style>
+                        </head>
+                        <body>
+                            <h1>🏋️ Your Fitness Schedule</h1>
+                            <pre style="white-space: pre-wrap; font-size: 14px;">${schedule}</pre>
+                        </body>
+                    </html>
+                `);
+                printWindow.document.close();
+                printWindow.print();
+            }
+        }
+    </script>
+</body>
+</html>

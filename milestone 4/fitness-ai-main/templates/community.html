@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community - FitAI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+            padding-top: 100px;
+        }
+        
+        .navbar {
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #6b46c1;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: #4b5563;
+            font-weight: 500;
+        }
+        
+        .nav-links a:hover {
+            color: #6b46c1;
+        }
+        
+        .profile-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #6b46c1;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            color: white;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .back-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s;
+        }
+        
+        .main-grid {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 1.5rem;
+        }
+        
+        .sidebar {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+        }
+        
+        .leaderboard {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        .leaderboard-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .rank {
+            width: 30px;
+            height: 30px;
+            background: #6b46c1;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            font-weight: bold;
+        }
+        
+        .rank-1 { background: gold; color: #1f2937; }
+        .rank-2 { background: silver; color: #1f2937; }
+        .rank-3 { background: #cd7f32; color: white; }
+        
+        .friend-card {
+            background: #f3f4f6;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .feed {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+        }
+        
+        .create-post {
+            margin-bottom: 2rem;
+        }
+        
+        .create-post textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+            resize: vertical;
+        }
+        
+        .post {
+            border-bottom: 1px solid #e5e7eb;
+            padding: 1rem 0;
+        }
+        
+        .post-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .post-avatar {
+            width: 40px;
+            height: 40px;
+            background: #6b46c1;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        .post-content {
+            margin: 0.5rem 0;
+            line-height: 1.6;
+        }
+        
+        .post-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 0.5rem;
+            color: #6b7280;
+        }
+        
+        .post-actions button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #6b7280;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        
+        .post-actions button:hover {
+            color: #6b46c1;
+        }
+        
+        .btn {
+            background: #6b46c1;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+        }
+        
+        .btn-success { background: #38a169; }
+        .btn-danger { background: #e53e3e; }
+        
+        .search-box {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .search-box input {
+            flex: 1;
+            padding: 0.5rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 0.5rem;
+        }
+        
+        .friend-avatar {
+            width: 30px;
+            height: 30px;
+            background: #6b46c1;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #6b7280;
+        }
+        
+        .alert {
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .alert-success { background: #d1fae5; color: #065f46; }
+        .alert-error { background: #fee2e2; color: #991b1b; }
+        
+        @media (max-width: 768px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        /* Dark mode styles */
+body.dark-mode {
+    background: #1a1a1a;
+    color: #e5e7eb;
+}
+
+body.dark-mode .navbar {
+    background: #2d2d2d;
+    color: white;
+}
+
+body.dark-mode .nav-links a {
+    color: #ddd;
+}
+
+body.dark-mode .nav-links a:hover {
+    color: #6b46c1;
+}
+
+body.dark-mode .card,
+body.dark-mode .sidebar,
+body.dark-mode .feed,
+body.dark-mode .chart-card,
+body.dark-mode .stat-card,
+body.dark-mode .goal-card,
+body.dark-mode .post,
+body.dark-mode .modal-content,
+body.dark-mode .settings-panel,
+body.dark-mode .left-sidebar,
+body.dark-mode .main-content,
+body.dark-mode .right-panel {
+    background: #2d2d2d;
+    color: #e5e7eb;
+    border-color: #4b5563;
+}
+
+body.dark-mode h1, 
+body.dark-mode h2, 
+body.dark-mode h3, 
+body.dark-mode h4,
+body.dark-mode .stat-value,
+body.dark-mode .goal-title,
+body.dark-mode .post-title,
+body.dark-mode .badge-name {
+    color: #f3f4f6;
+}
+
+body.dark-mode p,
+body.dark-mode .stat-label,
+body.dark-mode .post-meta,
+body.dark-mode .timeline-date,
+body.dark-mode .friend-name {
+    color: #9ca3af;
+}
+
+body.dark-mode input,
+body.dark-mode select,
+body.dark-mode textarea {
+    background: #374151;
+    border-color: #4b5563;
+    color: #e5e7eb;
+}
+
+body.dark-mode input:focus,
+body.dark-mode select:focus,
+body.dark-mode textarea:focus {
+    border-color: #6b46c1;
+}
+
+body.dark-mode .btn-outline {
+    border-color: #6b46c1;
+    color: #6b46c1;
+}
+
+body.dark-mode .btn-outline:hover {
+    background: #6b46c1;
+    color: white;
+}
+
+body.dark-mode .btn-secondary {
+    background: #374151;
+    color: #e5e7eb;
+    border-color: #4b5563;
+}
+
+body.dark-mode .btn-secondary:hover {
+    background: #4b5563;
+}
+
+body.dark-mode .progress-bar {
+    background: #4b5563;
+}
+
+body.dark-mode .progress-fill {
+    background: linear-gradient(90deg, #6b46c1, #38a169);
+}
+
+body.dark-mode .badge-card {
+    background: #374151;
+    color: #e5e7eb;
+}
+
+body.dark-mode .badge-card.locked {
+    opacity: 0.3;
+}
+
+body.dark-mode .friend-card,
+body.dark-mode .friend-item,
+body.dark-mode .post-item,
+body.dark-mode .timeline-item {
+    background: #374151;
+    border-color: #4b5563;
+}
+
+body.dark-mode .water-tracker {
+    background: #1e3a5f;
+}
+
+body.dark-mode .nutrition-tip {
+    background: #1f2937;
+}
+
+body.dark-mode .leaderboard-item {
+    border-color: #4b5563;
+}
+
+body.dark-mode .rank {
+    background: #4b5563;
+    color: #e5e7eb;
+}
+
+body.dark-mode .rank-1 { background: #b45309; }
+body.dark-mode .rank-2 { background: #6b7280; }
+body.dark-mode .rank-3 { background: #92400e; }
+
+body.dark-mode ::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+}
+
+body.dark-mode .close-btn {
+    color: #9ca3af;
+}
+
+body.dark-mode .close-btn:hover {
+    color: #f3f4f6;
+}
+
+body.dark-mode hr {
+    border-color: #4b5563;
+}
+
+body.dark-mode .alert-success {
+    background: #065f46;
+    color: #d1fae5;
+}
+
+body.dark-mode .alert-error {
+    background: #991b1b;
+    color: #fee2e2;
+}
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <i class="fas fa-dumbbell"></i>
+            <span>FitAI</span>
+        </div>
+        <div class="nav-links">
+            <a href="/dashboard">Dashboard</a>
+            <a href="/profile">Profile</a>
+            <a href="/analytics">📊 Analytics</a>
+            <a href="/achievements">🏆 Achievements</a>
+            <a href="/community" style="color: #6b46c1;">👥 Community</a>
+            <a href="/goals">🎯 Goals</a>
+            <a href="/calendar">📅 Calendar</a>
+            <a href="/music">🎵 Music</a>
+        </div>
+        <div class="profile-circle" onclick="window.location.href='/profile'">
+            {{ user.name[0]|upper }}
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="header">
+            <h1>
+                <i class="fas fa-users"></i>
+                Community
+            </h1>
+            <a href="/dashboard" class="back-btn">
+                <i class="fas fa-arrow-left"></i> Dashboard
+            </a>
+        </div>
+        
+        <div class="main-grid">
+            <!-- Left Sidebar -->
+            <div class="sidebar">
+                <h3 style="margin-bottom: 1rem;">Find Friends</h3>
+                <div class="search-box">
+                    <input type="email" id="searchEmail" placeholder="Search by email...">
+                    <button class="btn" onclick="sendFriendRequest()">Add Friend</button>
+                </div>
+                <div id="searchResult"></div>
+                
+                <h3 style="margin: 2rem 0 1rem;">Friend Requests</h3>
+                <div id="friendRequests">
+                    {% for request, sender in friend_requests %}
+                    <div class="friend-card" id="request-{{ request.id }}">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                            <div class="friend-avatar">{{ sender.name[0]|upper }}</div>
+                            <strong>{{ sender.name }}</strong>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn btn-success btn-sm" onclick="acceptRequest({{ request.id }})">✓ Accept</button>
+                            <button class="btn btn-danger btn-sm" onclick="declineRequest({{ request.id }})">✗ Decline</button>
+                        </div>
+                    </div>
+                    {% else %}
+                    <p style="color: #6b7280;">No pending requests</p>
+                    {% endfor %}
+                </div>
+                
+                <h3 style="margin: 2rem 0 1rem;">My Friends</h3>
+                <div id="friendsList">
+                    {% for friend in friends %}
+                    <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem;">
+                        <div class="friend-avatar">{{ friend.name[0]|upper }}</div>
+                        <span>{{ friend.name }}</span>
+                    </div>
+                    {% else %}
+                    <p style="color: #6b7280;">No friends yet</p>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <!-- Main Feed -->
+            <div class="feed">
+                <!-- Create Post -->
+                <div class="create-post">
+                    <textarea id="postContent" placeholder="Share your fitness progress..." rows="3"></textarea>
+                    <button class="btn" onclick="createPost()" style="width: 100%;">Post Update</button>
+                </div>
+                
+                <h3 style="margin-bottom: 1rem;">Activity Feed</h3>
+                <div id="postsFeed">
+                    {% for post, post_user in posts %}
+                    <div class="post" id="post-{{ post.id }}">
+                        <div class="post-header">
+                            <div class="post-avatar">{{ post_user.name[0]|upper }}</div>
+                            <div>
+                                <strong>{{ post_user.name }}</strong>
+                                <span style="color: #6b7280; font-size: 0.9rem;"> • {{ post.created_at.strftime('%b %d, %Y') }}</span>
+                            </div>
+                        </div>
+                        <div class="post-content">{{ post.content }}</div>
+                        <div class="post-actions">
+                            <button onclick="likePost({{ post.id }})">
+                                <i class="far fa-heart"></i> <span id="likes-{{ post.id }}">{{ post.likes }}</span>
+                            </button>
+                            <button><i class="far fa-comment"></i> 0</button>
+                        </div>
+                    </div>
+                    {% else %}
+                    <p style="color: #6b7280; text-align: center;">No posts yet. Be the first to share!</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Leaderboard -->
+        <div class="leaderboard">
+            <h3 style="margin-bottom: 1rem;">🏆 Leaderboard</h3>
+            {% for user_data, workout_count, total_calories in leaderboard %}
+            <div class="leaderboard-item">
+                <div class="rank rank-{{ loop.index }}">{{ loop.index }}</div>
+                <div style="flex: 1;">
+                    <strong>{{ user_data.name }}</strong>
+                    <span style="color: #6b7280;"> • {{ workout_count }} workouts • {{ total_calories|int }} cal</span>
+                </div>
+            </div>
+            {% else %}
+            <p style="color: #6b7280;">No data yet</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script>
+        async function sendFriendRequest() {
+            const email = document.getElementById('searchEmail').value;
+            const resultDiv = document.getElementById('searchResult');
+            
+            if (!email) {
+                resultDiv.innerHTML = '<div class="alert alert-error">Please enter an email</div>';
+                return;
+            }
+            
+            const response = await fetch('/send-friend-request', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({email: email})
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                resultDiv.innerHTML = '<div class="alert alert-success">✅ Friend request sent!</div>';
+                document.getElementById('searchEmail').value = '';
+                setTimeout(() => location.reload(), 1500);
+            } else {
+                resultDiv.innerHTML = `<div class="alert alert-error">❌ ${data.error}</div>`;
+            }
+        }
+        
+        async function acceptRequest(requestId) {
+            const response = await fetch('/accept-friend-request', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({request_id: requestId})
+            });
+            
+            const data = await response.json();
+            if (data.success) {
+                document.getElementById(`request-${requestId}`).remove();
+                location.reload();
+            }
+        }
+        
+        async function declineRequest(requestId) {
+            const response = await fetch('/decline-friend-request', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({request_id: requestId})
+            });
+            
+            const data = await response.json();
+            if (data.success) {
+                document.getElementById(`request-${requestId}`).remove();
+            }
+        }
+        
+    async function createPost() {
+        const content = document.getElementById('postContent').value;
+        
+        if (!content.trim()) {
+            alert('Please enter something to post');
+            return;
+        }
+        
+        // Show loading state
+        const btn = event.target;
+        const originalText = btn.innerText;
+        btn.innerText = 'Posting...';
+        btn.disabled = true;
+        
+        try {
+            const response = await fetch('/create-post', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    content: content,
+                    type: 'update'
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                alert('✅ Post created!');
+                document.getElementById('postContent').value = '';
+                location.reload(); // Refresh to show new post
+            } else {
+                alert('❌ Error: ' + (data.error || 'Unknown error'));
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('❌ Failed to create post');
+        } finally {
+            btn.innerText = originalText;
+            btn.disabled = false;
+        }
+    }
+    
+    // Make sure the button calls the function
+    document.querySelector('.create-post .btn').onclick = createPost;
+        
+        async function likePost(postId) {
+            const response = await fetch('/like-post', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({post_id: postId})
+            });
+            
+            const data = await response.json();
+            if (data.success) {
+                const likesSpan = document.getElementById(`likes-${postId}`);
+                likesSpan.innerText = parseInt(likesSpan.innerText) + 1;
+            }
+        }
+
+        // Apply dark mode on page load
+document.addEventListener('DOMContentLoaded', function() {
+    const savedDarkMode = localStorage.getItem('darkMode');
+    if (savedDarkMode === 'enabled') {
+        document.body.classList.add('dark-mode');
+    }
+});
+    </script>
+</body>
+</html>

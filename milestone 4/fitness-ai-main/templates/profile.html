@@ -1,0 +1,1409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ user.name }}'s Profile - FitAI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        }
+        
+        body {
+            background: #f3f4f6;
+            transition: background 0.3s;
+        }
+        
+        body.dark-mode {
+            background: #1a1a1a;
+            color: #fff;
+        }
+        
+        /* Navbar Styles */
+        .navbar {
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+
+
+        .dark-mode .navbar {
+            background: #2d2d2d;
+            color: white;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #6b46c1;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: #4b5563;
+            font-weight: 500;
+        }
+        
+        .dark-mode .nav-links a {
+            color: #ddd;
+        }
+        
+        .nav-links a:hover {
+            color: #6b46c1;
+        }
+
+
+
+
+
+        
+        .profile-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #6b46c1;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        /* Main Container */
+        .main-container {
+            display: grid;
+            grid-template-columns: 280px 1fr 300px;
+            gap: 1.5rem;
+            padding: 6rem 2rem 2rem;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        
+        /* Left Sidebar */
+        .left-sidebar {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            height: fit-content;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .dark-mode .left-sidebar {
+            background: #2d2d2d;
+            color: white;
+        }
+        
+        .profile-summary {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .profile-pic {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: #e5e7eb;
+            margin: 0 auto 1rem;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            border: 3px solid #6b46c1;
+        }
+        
+        .profile-pic img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .profile-pic-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.5);
+            color: white;
+            padding: 0.5rem;
+            font-size: 0.75rem;
+            text-align: center;
+            cursor: pointer;
+        }
+        
+        .quick-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .quick-actions button {
+            padding: 0.75rem;
+            border: none;
+            border-radius: 0.5rem;
+            background: #f3f4f6;
+            color: #1f2937;
+            cursor: pointer;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            width: 100%;
+        }
+        
+        .dark-mode .quick-actions button {
+            background: #3d3d3d;
+            color: white;
+        }
+        
+        .quick-actions button:hover {
+            background: #e5e7eb;
+        }
+        
+        .recent-section {
+            margin-top: 2rem;
+        }
+        
+        .recent-item {
+            padding: 0.75rem;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .recent-item img {
+            width: 40px;
+            height: 40px;
+            border-radius: 0.5rem;
+            object-fit: cover;
+        }
+        
+        /* Main Content */
+        .main-content {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .dark-mode .main-content {
+            background: #2d2d2d;
+            color: white;
+        }
+        
+        /* Meal Log Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .modal.show {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .dark-mode .modal-content {
+            background: #2d2d2d;
+            color: white;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #6b7280;
+        }
+        
+        .food-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .food-card {
+            background: #f9fafb;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .food-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .food-card img {
+            width: 100%;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Settings Panel */
+        .settings-panel {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 380px;
+            height: 100%;
+            background: white;
+            box-shadow: -2px 0 8px rgba(0,0,0,0.1);
+            z-index: 1001;
+            padding: 2rem;
+            transition: right 0.3s;
+            overflow-y: auto;
+        }
+        
+        .dark-mode .settings-panel {
+            background: #2d2d2d;
+            color: white;
+        }
+        
+        .settings-panel.open {
+            right: 0;
+        }
+        
+        .settings-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .setting-item {
+            margin-bottom: 1.5rem;
+        }
+        
+        .setting-item label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #4b5563;
+        }
+        
+        .dark-mode .setting-item label {
+            color: #ddd;
+        }
+        
+        .setting-item input, .setting-item select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+        }
+        
+        /* Toggle Switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+        
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: #6b46c1;
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .main-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Add these at the end of your existing style section */
+
+/* Animations */
+@keyframes slideIn {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.food-card, .recent-item, .achievement-card {
+    animation: slideIn 0.3s ease-out;
+}
+
+/* Hover effects */
+.food-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(107, 70, 193, 0.2);
+    transition: all 0.3s;
+}
+
+.recent-item:hover {
+    background: #f3f4f6;
+    transform: translateX(5px);
+    transition: all 0.3s;
+}
+
+/* Beautiful gradients */
+.gradient-bg {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.water-tracker {
+    background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+}
+
+/* Glass morphism effect */
+.glass-card {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Dark mode support */
+.dark-mode .glass-card {
+    background: rgba(45, 45, 45, 0.9);
+    color: white;
+}
+    </style>
+</head>
+<body>
+    <!-- Navbar - Add these new links -->
+<nav class="navbar">
+    <div class="logo">
+        <i class="fas fa-dumbbell"></i>
+        <span>FitAI</span>
+    </div>
+    <div class="nav-links">
+        <a href="/dashboard">Dashboard</a>
+        <a href="/profile">Profile</a>
+        <a href="/analytics">📊 Analytics</a>
+        <a href="/achievements">🏆 Achievements</a>
+        <a href="/community">👥 Community</a>
+        <a href="/goals">🎯 Goals</a>
+        <a href="/calendar">📅 Calendar</a>
+        <a href="/music">🎵 Music</a>
+    </div>
+    <div class="profile-circle" onclick="window.location.href='/profile'">
+        {{ user.name[0]|upper }}
+    </div>
+</nav>
+
+    <!-- Settings Panel -->
+<div id="settingsPanel" class="settings-panel">
+    <div class="settings-header">
+        <h2><i class="fas fa-cog" style="color: #6b46c1;"></i> Settings</h2>
+        <button class="close-btn" onclick="toggleSettings()">&times;</button>
+    </div>
+    
+    <div class="settings-section">
+        <h3><i class="fas fa-bell"></i> Notifications</h3>
+        <div class="setting-item">
+            <div class="setting-info">
+                <div class="setting-label">Enable Notifications</div>
+                <div class="setting-desc">Get workout reminders and tips</div>
+            </div>
+            <label class="switch">
+                <input type="checkbox" id="notificationToggle" checked onchange="saveSettings()">
+                <span class="slider round"></span>
+            </label>
+        </div>
+    </div>
+    
+    <div class="settings-section">
+        <h3><i class="fas fa-palette"></i> Appearance</h3>
+        <div class="setting-item">
+            <div class="setting-info">
+                <div class="setting-label">Dark Mode</div>
+                <div class="setting-desc">Switch to dark theme</div>
+            </div>
+            <label class="switch">
+                <input type="checkbox" id="darkModeToggle" onchange="toggleDarkMode()">
+                <span class="slider round"></span>
+            </label>
+        </div>
+    </div>
+    
+    <div class="settings-section">
+        <h3><i class="fas fa-ruler"></i> Units</h3>
+        <div class="setting-item">
+            <div class="setting-info">
+                <div class="setting-label">Measurement System</div>
+                <div class="setting-desc">Choose your preferred units</div>
+            </div>
+            <select id="measurementUnit" class="setting-select" onchange="saveSettings()">
+                <option value="metric">Metric (kg, cm)</option>
+                <option value="imperial">Imperial (lbs, ft)</option>
+            </select>
+        </div>
+    </div>
+    
+    <div class="settings-section">
+        <h3><i class="fas fa-clock"></i> Reminders</h3>
+        <div class="setting-item">
+            <div class="setting-info">
+                <div class="setting-label">Workout Reminder</div>
+                <div class="setting-desc">Daily reminder to workout</div>
+            </div>
+            <input type="time" id="workoutReminder" class="setting-time" value="08:00" onchange="saveSettings()">
+        </div>
+        
+        <div class="setting-item">
+            <div class="setting-info">
+                <div class="setting-label">Meal Reminder</div>
+                <div class="setting-desc">Daily reminder to log meals</div>
+            </div>
+            <input type="time" id="mealReminder" class="setting-time" value="12:00" onchange="saveSettings()">
+        </div>
+    </div>
+    
+    <div class="settings-section">
+        <h3><i class="fas fa-bullseye"></i> Goals</h3>
+        <div class="setting-item">
+            <div class="setting-info">
+                <div class="setting-label">Daily Calorie Goal</div>
+                <div class="setting-desc">Target calories per day</div>
+            </div>
+            <div class="goal-input">
+                <input type="number" id="calorieGoal" value="2000" min="1000" max="5000" step="50" onchange="saveSettings()">
+                <span class="goal-unit">kcal</span>
+            </div>
+        </div>
+        
+        <div class="setting-item">
+            <div class="setting-info">
+                <div class="setting-label">Daily Water Goal</div>
+                <div class="setting-desc">Target water intake per day</div>
+            </div>
+            <div class="goal-input">
+                <input type="number" id="waterGoal" value="2.5" min="1" max="5" step="0.1" onchange="saveSettings()">
+                <span class="goal-unit">L</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="settings-section">
+        <h3><i class="fas fa-shield-alt"></i> Privacy</h3>
+        <div class="setting-item">
+            <div class="setting-info">
+                <div class="setting-label">Profile Visibility</div>
+                <div class="setting-desc">Who can see your progress</div>
+            </div>
+            <select id="profileVisibility" class="setting-select" onchange="saveSettings()">
+                <option value="public">Public</option>
+                <option value="friends">Friends Only</option>
+                <option value="private">Private</option>
+            </select>
+        </div>
+    </div>
+    
+    <button class="save-settings-btn" onclick="saveSettings()">
+        <i class="fas fa-save"></i> Save All Settings
+    </button>
+</div>
+
+<style>
+/* Settings Panel Styles */
+.settings-panel {
+    position: fixed;
+    top: 0;
+    right: -400px;
+    width: 380px;
+    height: 100vh;
+    background: white;
+    box-shadow: -5px 0 30px rgba(0,0,0,0.2);
+    z-index: 1001;
+    padding: 2rem;
+    transition: right 0.3s ease;
+    overflow-y: auto;
+}
+
+.settings-panel.open {
+    right: 0;
+}
+
+.settings-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #f3f4f6;
+}
+
+.settings-header h2 {
+    font-size: 1.5rem;
+    color: #1f2937;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    color: #9ca3af;
+    transition: color 0.3s;
+}
+
+.close-btn:hover {
+    color: #6b46c1;
+}
+
+.settings-section {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.settings-section h3 {
+    color: #6b46c1;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.setting-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.25rem;
+}
+
+.setting-info {
+    flex: 1;
+}
+
+.setting-label {
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 0.25rem;
+}
+
+.setting-desc {
+    font-size: 0.8rem;
+    color: #9ca3af;
+}
+
+/* Toggle Switch */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 24px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 2px;
+    bottom: 2px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: #6b46c1;
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+.slider.round {
+    border-radius: 24px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+/* Select and Input Styles */
+.setting-select {
+    padding: 0.5rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 0.5rem;
+    font-size: 0.9rem;
+    color: #1f2937;
+    background: white;
+    cursor: pointer;
+    min-width: 120px;
+}
+
+.setting-select:focus {
+    outline: none;
+    border-color: #6b46c1;
+}
+
+.setting-time {
+    padding: 0.5rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 0.5rem;
+    font-size: 0.9rem;
+    color: #1f2937;
+}
+
+.goal-input {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.goal-input input {
+    width: 100px;
+    padding: 0.5rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 0.5rem;
+    text-align: right;
+}
+
+.goal-input input:focus {
+    outline: none;
+    border-color: #6b46c1;
+}
+
+.goal-unit {
+    color: #6b7280;
+    font-size: 0.9rem;
+    min-width: 40px;
+}
+
+.save-settings-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: transform 0.3s, box-shadow 0.3s;
+    margin-top: 1rem;
+}
+
+.save-settings-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+}
+
+/* Dark mode support */
+.dark-mode .settings-panel {
+    background: #1f2937;
+    color: white;
+}
+
+.dark-mode .settings-header h2 {
+    color: white;
+}
+
+.dark-mode .setting-label {
+    color: white;
+}
+
+.dark-mode .setting-select,
+.dark-mode .setting-time,
+.dark-mode .goal-input input {
+    background: #374151;
+    border-color: #4b5563;
+    color: white;
+}
+</style>
+
+
+
+
+
+
+
+
+
+    <!-- Main Content -->
+    <div class="main-container">
+        <!-- LEFT SIDEBAR -->
+        <div class="left-sidebar">
+            <div class="profile-summary">
+                <div class="profile-pic" onclick="document.getElementById('profilePicInput').click()">
+                    <img src="https://via.placeholder.com/120" alt="Profile">
+                    <div class="profile-pic-overlay">
+                        <i class="fas fa-camera"></i> Change
+                    </div>
+                </div>
+                <input type="file" id="profilePicInput" style="display: none;" accept="image/*">
+                <h2>{{ user.name }}</h2>
+<p style="color: #6b46c1;">
+    {{ user.fitness_level|capitalize }} • 
+    <span id="userLevel">Level <span id="levelValue">1</span></span>
+</p>
+            </div>
+
+            <div class="quick-actions">
+                <button onclick="window.location.href='/log-workout-page'">
+                    <i class="fas fa-dumbbell"></i> Log Workout
+                </button>
+                <button onclick="window.location.href='/log-meal-page'">
+                    <i class="fas fa-utensils"></i> Log Meal
+                </button>
+                <button onclick="window.location.href='/progress'">
+                    <i class="fas fa-chart-line"></i> View Progress
+                </button>
+                <button onclick="toggleSettings()">
+                    <i class="fas fa-cog"></i> Settings
+                </button>
+
+                <!-- 🔴 ADD LOGOUT BUTTON HERE -->
+    <a href="/logout" style="padding: 0.75rem; background: #fee2e2; border: none; border-radius: 0.5rem; text-align: left; text-decoration: none; color: #ef4444; display: flex; align-items: center; width: 100%; margin-top: 0.5rem;">
+        <i class="fas fa-sign-out-alt" style="margin-right: 0.5rem;"></i> Logout
+    </a>
+            </div>
+
+            <!-- Recent Workouts -->
+            <div class="recent-section">
+                <h3><i class="fas fa-history"></i> Recent Workouts</h3>
+                <div id="recentWorkouts"></div>
+            </div>
+
+            <!-- Recent Meals -->
+            <div class="recent-section">
+                <h3><i class="fas fa-utensils"></i> Recent Meals</h3>
+                <div id="recentMeals"></div>
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+            <!-- Weather Widget -->
+            <div class="weather-widget" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1.5rem; border-radius: 1rem; margin-bottom: 2rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <h3><i class="fas fa-cloud-sun"></i> Current Weather</h3>
+                        <div style="font-size: 2.5rem; font-weight: bold;" id="temperature">--°C</div>
+                        <div id="weatherCondition">Loading...</div>
+                        <div id="weatherHumidity"></div>
+                    </div>
+                    <div style="font-size: 4rem;" id="weatherIcon">☀️</div>
+                </div>
+            </div>
+
+            <!-- Nutrition Tip -->
+            <div class="nutrition-tip" style="background: #f0f9ff; padding: 1.5rem; border-radius: 1rem; margin-bottom: 2rem;">
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <div style="font-size: 3rem;" id="nutritionIcon">🥗</div>
+                    <div>
+                        <h3>Today's Nutrition Tip</h3>
+                        <p id="nutritionTip">Loading...</p>
+                    </div>
+                </div>
+                <button onclick="refreshNutritionTip()" style="margin-top: 1rem; background: none; border: none; color: #6b46c1; cursor: pointer;">
+                    <i class="fas fa-sync-alt"></i> New Tip
+                </button>
+            </div>
+
+            <!-- Water Tracker -->
+            <div class="water-tracker" style="background: #e0f2fe; padding: 1.5rem; border-radius: 1rem; margin-bottom: 2rem;">
+                <h3><i class="fas fa-tint"></i> Water Intake</h3>
+                <div style="display: flex; align-items: center; gap: 1rem; margin: 1rem 0;">
+                    <button onclick="adjustWater(-0.25)" style="background: #0284c7; color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer;">−</button>
+                    <div style="flex: 1; text-align: center;">
+                        <div style="font-size: 2rem; font-weight: bold;" id="waterAmount">1.5L</div>
+                        <div>of <span id="waterGoal">2.5L</span></div>
+                    </div>
+                    <button onclick="adjustWater(0.25)" style="background: #0284c7; color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer;">+</button>
+                </div>
+                <div class="water-progress" style="width: 100%; height: 10px; background: #bae6fd; border-radius: 5px; overflow: hidden;">
+                    <div class="water-fill" id="waterFill" style="height: 100%; background: #0284c7; width: 60%;"></div>
+                </div>
+            </div>
+
+            <!-- Achievements Summary -->
+<div class="achievements-summary" style="background: white; border-radius: 1rem; padding: 1.5rem; margin-top: 1.5rem;">
+    <h3 style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+        <i class="fas fa-trophy" style="color: #6b46c1;"></i>
+        Your Achievements
+    </h3>
+    
+    <div id="achievementsSummary" style="display: flex; flex-direction: column; gap: 0.75rem;">
+        <!-- Achievements will load here -->
+        <div style="text-align: center; color: #6b7280; padding: 1rem;">
+            <i class="fas fa-spinner fa-spin"></i> Loading achievements...
+        </div>
+    </div>
+    
+    <div style="text-align: center; margin-top: 1rem;">
+        <a href="/achievements" style="color: #6b46c1; text-decoration: none; font-size: 0.9rem;">
+            View All Achievements <i class="fas fa-arrow-right"></i>
+        </a>
+    </div>
+</div>
+        <!-- RIGHT PANEL -->
+        <div class="right-panel">
+            <!-- Meal Recommendations -->
+            <div style="background: white; padding: 1.5rem; border-radius: 1rem; margin-top: 1rem;">
+                <h3><i class="fas fa-utensils"></i> Recommended Meals</h3>
+                <div id="mealRecommendations" style="display: flex; flex-direction: column; gap: 1rem; margin-top: 1rem;"></div>
+            </div>
+
+            <!-- Workout Tips -->
+            <div style="background: white; padding: 1.5rem; border-radius: 1rem; margin-top: 1rem;">
+                <h3><i class="fas fa-lightbulb" style="color: #6b46c1;"></i> Quick Tips</h3>
+                <div id="workoutTips" style="margin-top: 1rem;">
+                    <div class="tip-item" style="padding: 0.75rem; background: #f3f4f6; border-radius: 0.5rem; margin-bottom: 0.5rem;">
+            <i class="fas fa-dumbbell" style="color: #6b46c1; margin-right: 0.5rem;"></i>
+            <strong>Form First:</strong> Always prioritize proper form over heavy weights
+        </div>
+        <div class="tip-item" style="padding: 0.75rem; background: #f3f4f6; border-radius: 0.5rem; margin-bottom: 0.5rem;">
+            <i class="fas fa-bed" style="color: #6b46c1; margin-right: 0.5rem;"></i>
+            <strong>Rest & Recovery:</strong> Get 7-8 hours of sleep for muscle growth
+        </div>
+        <div class="tip-item" style="padding: 0.75rem; background: #f3f4f6; border-radius: 0.5rem; margin-bottom: 0.5rem;">
+            <i class="fas fa-fire" style="color: #6b46c1; margin-right: 0.5rem;"></i>
+            <strong>Stay Hydrated:</strong> Drink water before, during, and after workouts
+        </div>
+        <div class="tip-item" style="padding: 0.75rem; background: #f3f4f6; border-radius: 0.5rem; margin-bottom: 0.5rem;">
+            <i class="fas fa-utensils" style="color: #6b46c1; margin-right: 0.5rem;"></i>
+            <strong>Pre-Workout Fuel:</strong> Eat a banana 30 mins before workout
+        </div>
+                
+            </div>
+        </div>
+    </div>
+
+    <!-- Log Meal Modal -->
+    <div id="mealModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Log Your Meal</h2>
+                <button class="close-btn" onclick="closeMealModal()">&times;</button>
+            </div>
+            
+            <div class="food-grid" id="foodGrid"></div>
+            
+            <form id="mealForm" onsubmit="logMeal(event)" style="margin-top: 1rem;">
+                <div class="form-group">
+                    <label>Meal Type</label>
+                    <select id="mealType" required>
+                        <option value="breakfast">Breakfast</option>
+                        <option value="lunch">Lunch</option>
+                        <option value="dinner">Dinner</option>
+                        <option value="snack">Snack</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Food Name</label>
+                    <input type="text" id="foodName" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Calories</label>
+                    <input type="number" id="calories" required>
+                </div>
+                
+                <button type="submit" class="btn-primary">Log Meal</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Water Tracker
+        let waterIntake = 1.5;
+        let waterGoal = 2.5;
+
+        function adjustWater(amount) {
+            waterIntake = Math.max(0, Math.min(waterGoal, waterIntake + amount));
+            updateWaterDisplay();
+        }
+
+        function updateWaterDisplay() {
+            const percentage = (waterIntake / waterGoal) * 100;
+            document.getElementById('waterAmount').innerText = waterIntake.toFixed(1) + 'L';
+            document.getElementById('waterFill').style.width = percentage + '%';
+        }
+
+        // Weather
+        async function updateWeather() {
+            try {
+                const response = await fetch('/get-weather?city=Chennai');
+                const data = await response.json();
+                
+                document.getElementById('temperature').innerText = data.temp + '°C';
+                document.getElementById('weatherCondition').innerText = data.condition;
+                document.getElementById('weatherHumidity').innerText = 'Humidity: ' + data.humidity + '%';
+                document.getElementById('weatherIcon').innerText = data.icon;
+            } catch {
+                document.getElementById('temperature').innerText = '32°C';
+                document.getElementById('weatherCondition').innerText = 'Sunny';
+            }
+        }
+
+        // Nutrition Tips
+        async function refreshNutritionTip() {
+            const response = await fetch('/get-nutrition-tip');
+            const data = await response.json();
+            document.getElementById('nutritionTip').innerText = data.tip;
+            document.getElementById('nutritionIcon').innerText = data.icon;
+        }
+
+        // Achievements
+        async function loadAchievements() {
+            const response = await fetch('/get-achievements');
+            const achievements = await response.json();
+            
+            const grid = document.getElementById('achievementsGrid');
+            grid.innerHTML = '';
+            
+            achievements.forEach(a => {
+                grid.innerHTML += `
+                    <div style="text-align: center; padding: 1rem; background: #fef3c7; border-radius: 0.5rem;">
+                        <div style="font-size: 2rem;">${a.icon}</div>
+                        <h4>${a.name}</h4>
+                        <p style="font-size: 0.875rem;">${a.description}</p>
+                    </div>
+                `;
+            });
+        }
+
+        // Recent Workouts
+        async function loadRecentWorkouts() {
+            const response = await fetch('/get-recent-workouts');
+            const workouts = await response.json();
+            
+            const container = document.getElementById('recentWorkouts');
+            container.innerHTML = '';
+            
+            workouts.forEach(w => {
+                container.innerHTML += `
+                    <div class="recent-item">
+                        <i class="fas fa-dumbbell" style="color: #6b46c1;"></i>
+                        <div>
+                            <strong>${w.workout_name}</strong><br>
+                            <small>${w.duration} min • ${w.calories_burned} cal</small>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // Recent Meals
+        async function loadRecentMeals() {
+            const response = await fetch('/get-recent-meals');
+            const meals = await response.json();
+            
+            const container = document.getElementById('recentMeals');
+            container.innerHTML = '';
+            
+            meals.forEach(m => {
+                container.innerHTML += `
+                    <div class="recent-item">
+                        <img src="${m.image_url || 'https://via.placeholder.com/40'}" alt="${m.food_name}">
+                        <div>
+                            <strong>${m.food_name}</strong><br>
+                            <small>${m.meal_type} • ${m.calories} cal</small>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // Meal Recommendations
+        async function loadMealRecommendations() {
+            const goal = '{{ user.fitness_level }}';
+            const recommendations = [
+                { name: 'Protein Oatmeal', calories: 350, image: '🍚', type: 'breakfast' },
+                { name: 'Grilled Chicken Salad', calories: 400, image: '🥗', type: 'lunch' },
+                { name: 'Salmon with Veggies', calories: 450, image: '🐟', type: 'dinner' },
+                { name: 'Greek Yogurt', calories: 150, image: '🥛', type: 'snack' }
+            ];
+            
+            const container = document.getElementById('mealRecommendations');
+            container.innerHTML = '';
+            
+            recommendations.forEach(r => {
+                container.innerHTML += `
+                    <div style="display: flex; align-items: center; gap: 1rem; padding: 0.5rem; background: #f9fafb; border-radius: 0.5rem;">
+                        <div style="font-size: 2rem;">${r.image}</div>
+                        <div>
+                            <strong>${r.name}</strong><br>
+                            <small>${r.calories} cal • ${r.type}</small>
+                        </div>
+                        <button onclick="quickAddMeal('${r.name}', ${r.calories})" style="margin-left: auto; background: #6b46c1; color: white; border: none; padding: 0.25rem 0.5rem; border-radius: 0.25rem; cursor: pointer;">Add</button>
+                    </div>
+                `;
+            });
+        }
+
+        // Settings
+        function toggleSettings() {
+            document.getElementById('settingsPanel').classList.toggle('open');
+        }
+
+        // Dark mode toggle - REPLACE YOUR EXISTING FUNCTION WITH THIS
+function toggleDarkMode() {
+    const isDarkMode = document.body.classList.toggle('dark-mode');
+    localStorage.setItem('darkMode', isDarkMode ? 'enabled' : 'disabled');
+    
+     const toggle = document.getElementById('darkModeToggle');
+    if (toggle) toggle.checked = isDarkMode;
+
+    // Also save to user settings in database
+    saveSettings();
+}
+
+// Apply dark mode on page load - ADD THIS NEW FUNCTION
+function applyDarkMode() {
+    const savedDarkMode = localStorage.getItem('darkMode');
+    if (savedDarkMode === 'enabled') {
+        document.body.classList.add('dark-mode');
+        const toggle = document.getElementById('darkModeToggle');
+        if (toggle) toggle.checked = true;
+    }
+}
+
+        // Save settings function
+async function saveSettings() {
+    const settings = {
+        notification_enabled: document.getElementById('notificationToggle').checked || false,
+        dark_mode: document.body.classList.contains('dark-mode'),
+        measurement_unit: document.getElementById('measurementUnit').value || 'metric',
+        workout_reminder_time: document.getElementById('workoutReminder').value || '08:00',
+        meal_reminder_time: document.getElementById('mealReminder').value || '12:00',
+        water_goal: parseFloat(document.getElementById('waterGoal').value || 2.5),
+        daily_calorie_goal: parseInt(document.getElementById('calorieGoal').value || 2000),
+        profile_visibility: document.getElementById('profileVisibility').value
+    };
+    
+    localStorage.setItem('darkMode',settings.dark_mode ? 'enabled' : 'disabled');
+    
+    // Show loading state
+    const btn = document.querySelector('.save-settings-btn');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+    btn.disabled = true;
+    
+    try {
+        const response = await fetch('/save-settings', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(settings)
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            // Show success message
+            alert('✅ Settings saved successfully!');
+            
+            // Update water goal display
+            waterGoal = settings.water_goal;
+            document.getElementById('waterGoal').innerText = waterGoal + 'L';
+            updateWaterDisplay();
+        } else {
+            alert('❌ Failed to save settings');
+        }
+    } catch (error) {
+        console.error('Error saving settings:', error);
+        alert('❌ Error saving settings');
+    } finally {
+        // Restore button
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+    }
+}
+
+
+
+// Load achievements summary
+async function loadAchievementsSummary() {
+    try {
+        const response = await fetch('/get-achievements');
+        const data = await response.json();
+        
+        const container = document.getElementById('achievementsSummary');
+        
+        if (data.achievements && data.achievements.length > 0) {
+            // Get only earned achievements (limit to 3)
+            const earned = data.achievements.filter(a => a.earned).slice(0, 3);
+            
+            if (earned.length > 0) {
+                let html = '';
+                earned.forEach(achievement => {
+                    html += `
+                        <div style="display: flex; align-items: center; gap: 1rem; padding: 0.75rem; background: #f3f4f6; border-radius: 0.5rem;">
+                            <div style="font-size: 2rem;">${achievement.icon}</div>
+                            <div style="flex: 1;">
+                                <div style="font-weight: bold; color: #1f2937;">${achievement.name}</div>
+                                <div style="font-size: 0.85rem; color: #6b7280;">${achievement.description}</div>
+                            </div>
+                            <div style="font-size: 0.8rem; color: #6b46c1; background: #e5e7eb; padding: 0.25rem 0.5rem; border-radius: 1rem;">
+                                ${achievement.date}
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                // Add streak info
+                html += `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: #f0f9ff; border-radius: 0.5rem; margin-top: 0.5rem;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <span style="font-size: 1.5rem;">🔥</span>
+                            <span style="font-weight: bold;">${data.streak || 0} Day Streak</span>
+                        </div>
+                        <span style="color: #6b46c1; font-weight: bold;">${data.badge_count || 0} Badges</span>
+                    </div>
+                `;
+                
+                container.innerHTML = html;
+            } else {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 1.5rem; background: #f3f4f6; border-radius: 0.5rem;">
+                        <i class="fas fa-trophy" style="font-size: 3rem; color: #d1d5db; margin-bottom: 0.5rem;"></i>
+                        <p style="color: #6b7280;">No achievements yet. Complete workouts to earn badges!</p>
+                        <a href="/achievements" style="display: inline-block; margin-top: 0.5rem; color: #6b46c1;">View All Badges →</a>
+                    </div>
+                `;
+            }
+        } else {
+            container.innerHTML = `
+                <div style="text-align: center; padding: 1.5rem; background: #f3f4f6; border-radius: 0.5rem;">
+                    <i class="fas fa-trophy" style="font-size: 3rem; color: #d1d5db; margin-bottom: 0.5rem;"></i>
+                    <p style="color: #6b7280;">No achievements yet. Complete workouts to earn badges!</p>
+                    <a href="/achievements" style="display: inline-block; margin-top: 0.5rem; color: #6b46c1;">View All Badges →</a>
+                </div>
+            `;
+        }
+    } catch (error) {
+        console.error('Error loading achievements:', error);
+        document.getElementById('achievementsSummary').innerHTML = `
+            <div style="text-align: center; color: #e53e3e; padding: 1rem;">
+                Failed to load achievements
+            </div>
+        `;
+    }
+}
+
+
+async function loadSettings() {
+    try {
+        const response = await fetch('/get-settings');
+        const data = await response.json();
+        
+        if (data.success) {
+            document.getElementById('notificationToggle').checked = data.notification_enabled;
+            document.getElementById('darkModeToggle').checked = data.dark_mode;
+            document.getElementById('measurementUnit').value = data.measurement_unit;
+            document.getElementById('workoutReminder').value = data.workout_reminder_time;
+            document.getElementById('mealReminder').value = data.meal_reminder_time;
+            document.getElementById('waterGoal').value = data.water_goal;
+            document.getElementById('calorieGoal').value = data.daily_calorie_goal;
+            document.getElementById('profileVisibility').value = data.profile_visibility;
+            
+            // Apply dark mode if enabled
+            if (data.dark_mode) {
+                document.body.classList.add('dark-mode');
+            }
+        }
+    } catch (error) {
+        console.error('Error loading settings:', error);
+    }
+}
+
+
+        // Meal Logging
+        function showLogMealModal() {
+            document.getElementById('mealModal').classList.add('show');
+            loadFoodGrid();
+        }
+
+        function closeMealModal() {
+            document.getElementById('mealModal').classList.remove('show');
+        }
+
+        function loadFoodGrid() {
+            const foods = [
+                { name: 'Oatmeal', calories: 300, image: '🍚' },
+                { name: 'Chicken Breast', calories: 350, image: '🍗' },
+                { name: 'Salmon', calories: 400, image: '🐟' },
+                { name: 'Brown Rice', calories: 200, image: '🍚' },
+                { name: 'Broccoli', calories: 50, image: '🥦' },
+                { name: 'Greek Yogurt', calories: 150, image: '🥛' }
+            ];
+            
+            const grid = document.getElementById('foodGrid');
+            grid.innerHTML = '';
+            
+            foods.forEach(f => {
+                grid.innerHTML += `
+                    <div class="food-card" onclick="selectFood('${f.name}', ${f.calories})">
+                        <div style="font-size: 3rem; text-align: center;">${f.image}</div>
+                        <h4>${f.name}</h4>
+                        <p>${f.calories} cal</p>
+                    </div>
+                `;
+            });
+        }
+
+        function selectFood(name, calories) {
+            document.getElementById('foodName').value = name;
+            document.getElementById('calories').value = calories;
+        }
+
+        async function logMeal(event) {
+            event.preventDefault();
+            
+            const meal = {
+                meal_type: document.getElementById('mealType').value,
+                food_name: document.getElementById('foodName').value,
+                calories: parseInt(document.getElementById('calories').value)
+            };
+            
+            await fetch('/log-meal', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(meal)
+            });
+            
+            closeMealModal();
+            loadRecentMeals();
+            alert('Meal logged successfully!');
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+                        // Then apply dark mode from localStorage
+
+            applyDarkMode();
+            loadSettings();
+
+    
+            updateWeather();
+            refreshNutritionTip();
+            loadAchievements();
+            loadRecentWorkouts();
+            loadRecentMeals();
+            loadMealRecommendations();
+            loadAchievementsSummary(); // Add this line
+            loadUserLevel();
+            
+            // Refresh weather every 30 minutes
+            setInterval(updateWeather, 1800000);
+            // Refresh nutrition tip every hour
+            setInterval(refreshNutritionTip, 3600000);
+        });
+
+
+
+        
+    </script>
+</body>
+</html>

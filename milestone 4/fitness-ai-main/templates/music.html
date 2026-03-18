@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music - FitAI</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+            padding-top: 100px;
+        }
+        
+        /* Navbar Styles */
+        .navbar {
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #6b46c1;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: #4b5563;
+            font-weight: 500;
+        }
+        
+        .nav-links a:hover {
+            color: #6b46c1;
+        }
+        
+        .profile-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #6b46c1;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            color: white;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .back-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s;
+        }
+        
+        /* Now Playing Section */
+        .player-section {
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .now-playing {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .album-art {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, #6b46c1, #38a169);
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        
+        .track-info {
+            flex: 1;
+        }
+        
+        .track-name {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #1f2937;
+        }
+        
+        .track-artist {
+            color: #6b7280;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .track-meta {
+            display: flex;
+            gap: 1rem;
+            color: #6b46c1;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .progress-container {
+            width: 100%;
+            margin-bottom: 0.5rem;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #e5e7eb;
+            border-radius: 3px;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .progress-fill {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #6b46c1, #38a169);
+            border-radius: 3px;
+            transition: width 0.1s linear;
+        }
+        
+        .time {
+            display: flex;
+            justify-content: space-between;
+            color: #6b7280;
+            font-size: 0.9rem;
+            margin-top: 0.25rem;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+        
+        .control-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #6b46c1;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+        }
+        
+        .control-btn:hover {
+            transform: scale(1.1);
+            background: #553c9a;
+        }
+        
+        .control-btn:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+        
+        /* Workout Playlists Grid */
+        .section-title {
+            color: white;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .playlists-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .playlist-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+        
+        .playlist-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border-color: #6b46c1;
+        }
+        
+        .playlist-card.active {
+            border-color: #6b46c1;
+            background: #f3f4f6;
+        }
+        
+        .playlist-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #6b46c1, #38a169);
+            border-radius: 50%;
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+        }
+        
+        .playlist-name {
+            font-weight: bold;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+        }
+        
+        .playlist-bpm {
+            color: #6b46c1;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .playlist-songs {
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+        
+        /* Mood-Based Selection */
+        .mood-section {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .mood-title {
+            color: #6b46c1;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .mood-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .mood-btn {
+            flex: 1;
+            padding: 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 0.5rem;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+        
+        .mood-btn:hover {
+            background: #6b46c1;
+            color: white;
+            border-color: #6b46c1;
+        }
+        
+        .mood-btn.active {
+            background: #6b46c1;
+            color: white;
+            border-color: #6b46c1;
+        }
+        
+        /* Playlist Tracks */
+        .tracks-section {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+        }
+        
+        .track-list {
+            margin-top: 1rem;
+        }
+        
+        .track-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .track-item:hover {
+            background: #f3f4f6;
+        }
+        
+        .track-item.playing {
+            background: #f3f4f6;
+            border-left: 4px solid #6b46c1;
+        }
+        
+        .track-number {
+            width: 30px;
+            color: #6b7280;
+            font-weight: 600;
+        }
+        
+        .track-info-small {
+            flex: 2;
+        }
+        
+        .track-title {
+            font-weight: 600;
+            color: #1f2937;
+        }
+        
+        .track-artist-small {
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+        
+        .track-duration {
+            color: #6b7280;
+            margin-right: 1rem;
+        }
+        
+        .play-indicator {
+            color: #6b46c1;
+            margin-right: 1rem;
+        }
+        
+        .bpm-badge {
+            background: #f3f4f6;
+            padding: 0.25rem 0.5rem;
+            border-radius: 1rem;
+            font-size: 0.8rem;
+            color: #6b46c1;
+            font-weight: 600;
+        }
+        
+        @media (max-width: 768px) {
+            .playlists-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .now-playing {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .mood-buttons {
+                flex-wrap: wrap;
+            }
+        }
+
+        /* Dark mode styles */
+body.dark-mode {
+    background: #1a1a1a;
+    color: #e5e7eb;
+}
+
+body.dark-mode .navbar {
+    background: #2d2d2d;
+    color: white;
+}
+
+body.dark-mode .nav-links a {
+    color: #ddd;
+}
+
+body.dark-mode .nav-links a:hover {
+    color: #6b46c1;
+}
+
+body.dark-mode .card,
+body.dark-mode .sidebar,
+body.dark-mode .feed,
+body.dark-mode .chart-card,
+body.dark-mode .stat-card,
+body.dark-mode .goal-card,
+body.dark-mode .post,
+body.dark-mode .modal-content,
+body.dark-mode .settings-panel,
+body.dark-mode .left-sidebar,
+body.dark-mode .main-content,
+body.dark-mode .right-panel {
+    background: #2d2d2d;
+    color: #e5e7eb;
+    border-color: #4b5563;
+}
+
+body.dark-mode h1, 
+body.dark-mode h2, 
+body.dark-mode h3, 
+body.dark-mode h4,
+body.dark-mode .stat-value,
+body.dark-mode .goal-title,
+body.dark-mode .post-title,
+body.dark-mode .badge-name {
+    color: #f3f4f6;
+}
+
+body.dark-mode p,
+body.dark-mode .stat-label,
+body.dark-mode .post-meta,
+body.dark-mode .timeline-date,
+body.dark-mode .friend-name {
+    color: #9ca3af;
+}
+
+body.dark-mode input,
+body.dark-mode select,
+body.dark-mode textarea {
+    background: #374151;
+    border-color: #4b5563;
+    color: #e5e7eb;
+}
+
+body.dark-mode input:focus,
+body.dark-mode select:focus,
+body.dark-mode textarea:focus {
+    border-color: #6b46c1;
+}
+
+body.dark-mode .btn-outline {
+    border-color: #6b46c1;
+    color: #6b46c1;
+}
+
+body.dark-mode .btn-outline:hover {
+    background: #6b46c1;
+    color: white;
+}
+
+body.dark-mode .btn-secondary {
+    background: #374151;
+    color: #e5e7eb;
+    border-color: #4b5563;
+}
+
+body.dark-mode .btn-secondary:hover {
+    background: #4b5563;
+}
+
+body.dark-mode .progress-bar {
+    background: #4b5563;
+}
+
+body.dark-mode .progress-fill {
+    background: linear-gradient(90deg, #6b46c1, #38a169);
+}
+
+body.dark-mode .badge-card {
+    background: #374151;
+    color: #e5e7eb;
+}
+
+body.dark-mode .badge-card.locked {
+    opacity: 0.3;
+}
+
+body.dark-mode .friend-card,
+body.dark-mode .friend-item,
+body.dark-mode .post-item,
+body.dark-mode .timeline-item {
+    background: #374151;
+    border-color: #4b5563;
+}
+
+body.dark-mode .water-tracker {
+    background: #1e3a5f;
+}
+
+body.dark-mode .nutrition-tip {
+    background: #1f2937;
+}
+
+body.dark-mode .leaderboard-item {
+    border-color: #4b5563;
+}
+
+body.dark-mode .rank {
+    background: #4b5563;
+    color: #e5e7eb;
+}
+
+body.dark-mode .rank-1 { background: #b45309; }
+body.dark-mode .rank-2 { background: #6b7280; }
+body.dark-mode .rank-3 { background: #92400e; }
+
+body.dark-mode ::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+}
+
+body.dark-mode .close-btn {
+    color: #9ca3af;
+}
+
+body.dark-mode .close-btn:hover {
+    color: #f3f4f6;
+}
+
+body.dark-mode hr {
+    border-color: #4b5563;
+}
+
+body.dark-mode .alert-success {
+    background: #065f46;
+    color: #d1fae5;
+}
+
+body.dark-mode .alert-error {
+    background: #991b1b;
+    color: #fee2e2;
+}
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo">
+            <i class="fas fa-dumbbell"></i>
+            <span>FitAI</span>
+        </div>
+        <div class="nav-links">
+            <a href="/dashboard">Dashboard</a>
+            <a href="/profile">Profile</a>
+            <a href="/analytics">📊 Analytics</a>
+            <a href="/achievements">🏆 Achievements</a>
+            <a href="/community">👥 Community</a>
+            <a href="/goals">🎯 Goals</a>
+            <a href="/calendar">📅 Calendar</a>
+            <a href="/music" style="color: #6b46c1;">🎵 Music</a>
+        </div>
+        <div class="profile-circle" onclick="window.location.href='/profile'">
+            {{ user.name[0]|upper }}
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="header">
+            <h1>
+                <i class="fas fa-headphones"></i>
+                Workout Music
+            </h1>
+            <a href="/dashboard" class="back-btn">
+                <i class="fas fa-arrow-left"></i> Dashboard
+            </a>
+        </div>
+
+        <!-- Now Playing Section -->
+        <div class="player-section">
+            <div class="now-playing">
+                <div class="album-art" id="albumArt">
+                    <i class="fas fa-bolt"></i>
+                </div>
+                <div class="track-info">
+                    <div class="track-name" id="currentTrack">Eye of the Tiger</div>
+                    <div class="track-artist" id="currentArtist">Survivor</div>
+                    <div class="track-meta">
+                        <span><i class="fas fa-fire"></i> <span id="currentBPM">155</span> BPM</span>
+                        <span><i class="fas fa-clock"></i> <span id="currentDuration">4:05</span></span>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-bar" onclick="seekTrack(event)">
+                            <div class="progress-fill" id="progressFill"></div>
+                        </div>
+                        <div class="time">
+                            <span id="currentTime">0:00</span>
+                            <span id="totalTime">4:05</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="controls">
+                <button class="control-btn" onclick="prevTrack()"><i class="fas fa-step-backward"></i></button>
+                <button class="control-btn" id="playPauseBtn" onclick="togglePlay()"><i class="fas fa-play"></i></button>
+                <button class="control-btn" onclick="nextTrack()"><i class="fas fa-step-forward"></i></button>
+            </div>
+        </div>
+
+        <!-- Workout Playlists Grid -->
+        <h2 class="section-title"><i class="fas fa-dumbbell"></i> Workout Playlists by BPM</h2>
+        <div class="playlists-grid" id="playlistsGrid">
+            <!-- Playlists will be loaded here -->
+        </div>
+
+        <!-- Mood-Based Selection -->
+        <div class="mood-section">
+            <h3 class="mood-title"><i class="fas fa-heart"></i> Choose Your Workout Mood</h3>
+            <div class="mood-buttons" id="moodButtons">
+                <button class="mood-btn" onclick="filterByMood('power')">⚡ Power (140-180 BPM)</button>
+                <button class="mood-btn" onclick="filterByMood('cardio')">🏃 Cardio (120-140 BPM)</button>
+                <button class="mood-btn" onclick="filterByMood('strength')">💪 Strength (100-120 BPM)</button>
+                <button class="mood-btn" onclick="filterByMood('recovery')">🧘 Recovery (60-100 BPM)</button>
+            </div>
+        </div>
+
+        <!-- Playlist Tracks -->
+        <div class="tracks-section">
+            <h3 id="currentPlaylistTitle">Heavy Lifting Playlist</h3>
+            <div class="track-list" id="trackList">
+                <!-- Tracks will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden Audio Element -->
+    <audio id="audioPlayer" preload="auto"></audio>
+
+    <script>
+        // Music database with royalty-free tracks [citation:5]
+        const musicDatabase = {
+            playlists: [
+                {
+                    id: 'heavy-lifting',
+                    name: 'Heavy Lifting',
+                    icon: '🏋️',
+                    bpm: '140-180',
+                    songs: 15,
+                    duration: 45,
+                    mood: 'power',
+                    tracks: [
+                        { title: 'Eye of the Tiger', artist: 'Survivor', duration: '4:05', bpm: 155, audio: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3' },
+                        { title: 'Thunderstruck', artist: 'AC/DC', duration: '4:52', bpm: 165, audio: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3' },
+                        { title: 'Stronger', artist: 'Kanye West', duration: '5:12', bpm: 150, audio: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3' },
+                        { title: 'Believer', artist: 'Imagine Dragons', duration: '3:24', bpm: 145, audio: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3' },
+                        { title: 'Lose Yourself', artist: 'Eminem', duration: '5:26', bpm: 160, audio: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3' }
+                    ]
+                },
+                {
+                    id: 'cardio-rush',
+                    name: 'Cardio Rush',
+                    icon: '🏃',
+                    bpm: '120-140',
+                    songs: 20,
+                    duration: 60,
+                    mood: 'cardio',
+                    tracks: [
+                        { title: 'Uptown Funk', artist: 'Mark Ronson ft. Bruno Mars', duration: '4:30', bpm: 130, audio: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3' },
+                        { title: 'Can\'t Stop the Feeling', artist: 'Justin Timberlake', duration: '3:56', bpm: 125, audio: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3' },
+                        { title: 'Shake It Off', artist: 'Taylor Swift', duration: '3:39', bpm: 135, audio: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3' },
+                        { title: 'Happy', artist: 'Pharrell Williams', duration: '3:53', bpm: 130, audio: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3' },
+                        { title: 'Dance Monkey', artist: 'Tones and I', duration: '3:29', bpm: 125, audio: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3' }
+                    ]
+                },
+                {
+                    id: 'hiit-mix',
+                    name: 'HIIT Mix',
+                    icon: '⚡',
+                    bpm: '130-160',
+                    songs: 12,
+                    duration: 30,
+                    mood: 'power',
+                    tracks: [
+                        { title: 'Titanium', artist: 'David Guetta ft. Sia', duration: '4:05', bpm: 150, audio: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-11.mp3' },
+                        { title: 'Animals', artist: 'Martin Garrix', duration: '5:03', bpm: 155, audio: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-12.mp3' },
+                        { title: 'Turn Down for What', artist: 'DJ Snake', duration: '3:33', bpm: 145, audio: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-13.mp3' },
+                        { title: 'Levels', artist: 'Avicii', duration: '5:38', bpm: 140, audio: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-14.mp3' },
+                        { title: 'Wake Me Up', artist: 'Avicii', duration: '4:09', bpm: 135, audio: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-15.mp3' }
+                    ]
+                },
+                {
+                    id: 'yoga-meditation',
+                    name: 'Yoga & Meditation',
+                    icon: '🧘',
+                    bpm: '60-100',
+                    songs: 10,
+                    duration: 50,
+                    mood: 'recovery',
+                    tracks: [
+                        { title: 'Weightless', artist: 'Marconi Union', duration: '8:00', bpm: 60, audio: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-16.mp3' },
+                        { title: 'Spiegel im Spiegel', artist: 'Arvo Pärt', duration: '10:00', bpm: 70, audio: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-17.mp3' },
+                        { title: 'Gymnopédie No.1', artist: 'Erik Satie', duration: '3:00', bpm: 65, audio: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-18.mp3' },
+                        { title: 'Clair de Lune', artist: 'Claude Debussy', duration: '5:00', bpm: 80, audio: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-19.mp3' },
+                        { title: 'Meditation', artist: 'Jules Massenet', duration: '6:00', bpm: 75, audio: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-20.mp3' }
+                    ]
+                }
+            ]
+        };
+
+        // Player state
+        let currentPlaylist = musicDatabase.playlists[0];
+        let currentTrackIndex = 0;
+        let isPlaying = false;
+        let audioPlayer = document.getElementById('audioPlayer');
+        let progressInterval = null;
+
+        // Initialize page
+        function initMusic() {
+            renderPlaylists();
+            renderTracks();
+            setupAudioPlayer();
+        }
+
+        function renderPlaylists() {
+            const grid = document.getElementById('playlistsGrid');
+            grid.innerHTML = musicDatabase.playlists.map(playlist => `
+                <div class="playlist-card ${playlist.id === currentPlaylist.id ? 'active' : ''}" onclick="selectPlaylist('${playlist.id}')">
+                    <div class="playlist-icon">${playlist.icon}</div>
+                    <div class="playlist-name">${playlist.name}</div>
+                    <div class="playlist-bpm">${playlist.bpm} BPM</div>
+                    <div class="playlist-songs">${playlist.songs} songs • ${playlist.duration} min</div>
+                </div>
+            `).join('');
+        }
+
+        function renderTracks() {
+            const trackList = document.getElementById('trackList');
+            const title = document.getElementById('currentPlaylistTitle');
+            title.textContent = currentPlaylist.name + ' Playlist';
+            
+            trackList.innerHTML = currentPlaylist.tracks.map((track, index) => `
+                <div class="track-item ${index === currentTrackIndex ? 'playing' : ''}" onclick="playTrack(${index})">
+                    <span class="track-number">${index + 1}</span>
+                    <div class="track-info-small">
+                        <div class="track-title">${track.title}</div>
+                        <div class="track-artist-small">${track.artist}</div>
+                    </div>
+                    <span class="bpm-badge">${track.bpm} BPM</span>
+                    <span class="track-duration">${track.duration}</span>
+                    ${index === currentTrackIndex && isPlaying ? 
+                        '<span class="play-indicator"><i class="fas fa-volume-up"></i></span>' : ''}
+                </div>
+            `).join('');
+        }
+
+        function selectPlaylist(playlistId) {
+            currentPlaylist = musicDatabase.playlists.find(p => p.id === playlistId);
+            currentTrackIndex = 0;
+            renderPlaylists();
+            renderTracks();
+            loadTrack();
+            updateNowPlaying();
+        }
+
+        function playTrack(index) {
+            currentTrackIndex = index;
+            loadTrack();
+            playAudio();
+            renderTracks();
+        }
+
+        function loadTrack() {
+            const track = currentPlaylist.tracks[currentTrackIndex];
+            audioPlayer.src = track.audio;
+            document.getElementById('currentTrack').textContent = track.title;
+            document.getElementById('currentArtist').textContent = track.artist;
+            document.getElementById('currentBPM').textContent = track.bpm;
+            document.getElementById('currentDuration').textContent = track.duration;
+            document.getElementById('totalTime').textContent = track.duration;
+            
+            // Update album art based on playlist
+            const albumArt = document.getElementById('albumArt');
+            albumArt.innerHTML = `<i class="fas ${getIconForPlaylist(currentPlaylist.id)}"></i>`;
+        }
+
+        function getIconForPlaylist(playlistId) {
+            const icons = {
+                'heavy-lifting': 'fa-dumbbell',
+                'cardio-rush': 'fa-running',
+                'hiit-mix': 'fa-bolt',
+                'yoga-meditation': 'fa-pray'
+            };
+            return icons[playlistId] || 'fa-headphones';
+        }
+
+        function setupAudioPlayer() {
+            audioPlayer.addEventListener('timeupdate', updateProgress);
+            audioPlayer.addEventListener('ended', nextTrack);
+        }
+
+        function togglePlay() {
+            if (isPlaying) {
+                pauseAudio();
+            } else {
+                playAudio();
+            }
+        }
+
+        function playAudio() {
+            audioPlayer.play();
+            isPlaying = true;
+            document.getElementById('playPauseBtn').innerHTML = '<i class="fas fa-pause"></i>';
+            startProgressUpdate();
+        }
+
+        function pauseAudio() {
+            audioPlayer.pause();
+            isPlaying = false;
+            document.getElementById('playPauseBtn').innerHTML = '<i class="fas fa-play"></i>';
+            stopProgressUpdate();
+        }
+
+        function nextTrack() {
+            currentTrackIndex = (currentTrackIndex + 1) % currentPlaylist.tracks.length;
+            loadTrack();
+            if (isPlaying) {
+                playAudio();
+            }
+            renderTracks();
+        }
+
+        function prevTrack() {
+            currentTrackIndex = (currentTrackIndex - 1 + currentPlaylist.tracks.length) % currentPlaylist.tracks.length;
+            loadTrack();
+            if (isPlaying) {
+                playAudio();
+            }
+            renderTracks();
+        }
+
+        function updateProgress() {
+            if (audioPlayer.duration) {
+                const progress = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+                document.getElementById('progressFill').style.width = progress + '%';
+                
+                const currentMinutes = Math.floor(audioPlayer.currentTime / 60);
+                const currentSeconds = Math.floor(audioPlayer.currentTime % 60);
+                document.getElementById('currentTime').textContent = 
+                    `${currentMinutes}:${currentSeconds.toString().padStart(2, '0')}`;
+            }
+        }
+
+        function seekTrack(event) {
+            const progressBar = event.currentTarget;
+            const clickPosition = event.offsetX / progressBar.offsetWidth;
+            audioPlayer.currentTime = clickPosition * audioPlayer.duration;
+        }
+
+        function startProgressUpdate() {
+            if (progressInterval) clearInterval(progressInterval);
+            progressInterval = setInterval(updateProgress, 100);
+        }
+
+        function stopProgressUpdate() {
+            if (progressInterval) {
+                clearInterval(progressInterval);
+                progressInterval = null;
+            }
+        }
+
+        function filterByMood(mood) {
+            // Highlight active mood button
+            document.querySelectorAll('.mood-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Filter playlists by mood
+            const filtered = musicDatabase.playlists.filter(p => p.mood === mood);
+            if (filtered.length > 0) {
+                selectPlaylist(filtered[0].id);
+            }
+        }
+
+        function updateNowPlaying() {
+            const track = currentPlaylist.tracks[currentTrackIndex];
+            document.getElementById('currentTrack').textContent = track.title;
+            document.getElementById('currentArtist').textContent = track.artist;
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+             const savedDarkMode = localStorage.getItem('darkMode');
+    if (savedDarkMode === 'enabled') {
+        document.body.classList.add('dark-mode');
+    }
+    
+            initMusic();
+            loadTrack();
+        });
+    </script>
+</body>
+</html>

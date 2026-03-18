@@ -1,0 +1,11 @@
+flask
+flask-sqlalchemy
+flask-mail
+flask-login
+requests
+python-dotenv
+gunicorn
+langchain-huggingface
+huggingface_hub
+psycopg2-binary
+sendgrid 
